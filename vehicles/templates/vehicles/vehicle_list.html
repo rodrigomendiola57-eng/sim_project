@@ -1,0 +1,17 @@
+{% block content %}
+<h1>Lista de Vehículos</h1>
+
+<a href="{% url 'vehicle_add' %}">Agregar Vehículo</a>
+
+<ul>
+  {% for vehicle in object_list %}
+    <li>
+      {{ vehicle.name }} - {{ vehicle.plate }}
+      <a href="{% url 'vehicle_update' vehicle.id %}">Editar</a>
+      <a href="{% url 'vehicle_delete' vehicle.id %}">Eliminar</a>
+    </li>
+  {% empty %}
+    <li>No hay vehículos</li>
+  {% endfor %}
+</ul>
+{% endblock %}

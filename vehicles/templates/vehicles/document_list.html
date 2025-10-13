@@ -1,0 +1,17 @@
+{% block content %}
+<h1>Lista de Documentos</h1>
+
+<a href="{% url 'document_add' %}">Agregar Documento</a>
+
+<ul>
+  {% for document in object_list %}
+    <li>
+      {{ document.name }} - {{ document.expiration_date }}
+      <a href="{% url 'document_update' document.id %}">Editar</a>
+      <a href="{% url 'document_delete' document.id %}">Eliminar</a>
+    </li>
+  {% empty %}
+    <li>No hay documentos</li>
+  {% endfor %}
+</ul>
+{% endblock %}

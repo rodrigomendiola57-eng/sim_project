@@ -1,0 +1,11 @@
+{% block content %}
+<h1>Eliminar Vehículo</h1>
+<p>¿Seguro que deseas eliminar "{{ object }}"?</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Sí, eliminar</button>
+</form>
+
+<a href="{% url 'vehicle_list' %}">Cancelar</a>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% block content %}
+<h1>Lista de Mantenimientos</h1>
+
+<a href="{% url 'maintenance_add' %}">Agregar Mantenimiento</a>
+
+<ul>
+  {% for maintenance in object_list %}
+    <li>
+      {{ maintenance.vehicle }} - {{ maintenance.date }}
+      <a href="{% url 'maintenance_update' maintenance.id %}">Editar</a>
+      <a href="{% url 'maintenance_delete' maintenance.id %}">Eliminar</a>
+    </li>
+  {% empty %}
+    <li>No hay mantenimientos</li>
+  {% endfor %}
+</ul>
+{% endblock %}
