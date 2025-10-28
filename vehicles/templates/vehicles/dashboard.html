@@ -292,17 +292,64 @@
 
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+
+<style>
+    /* Optimización del calendario para móviles */
+    @media (max-width: 768px) {
+        #calendar {
+            font-size: 0.75rem;
+        }
+        
+        .fc .fc-toolbar {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .fc .fc-toolbar-chunk {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .fc .fc-button {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+        }
+        
+        .fc .fc-toolbar-title {
+            font-size: 1rem;
+        }
+        
+        .fc-daygrid-day-number {
+            font-size: 0.7rem;
+        }
+        
+        .fc-event {
+            font-size: 0.65rem;
+            padding: 1px 2px;
+        }
+        
+        .fc-col-header-cell {
+            font-size: 0.7rem;
+        }
+    }
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
+    var isMobile = window.innerWidth <= 768;
+    
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
+        initialView: isMobile ? 'dayGridWeek' : 'dayGridMonth',
         locale: 'es',
         headerToolbar: {
-            left: 'prev,next today',
+            left: 'prev,next',
             center: 'title',
-            right: 'dayGridMonth,dayGridWeek'
+            right: isMobile ? 'today' : 'dayGridMonth,dayGridWeek,today'
         },
+        height: isMobile ? 'auto' : 650,
+        contentHeight: isMobile ? 400 : 600,
         events: [
             {% for doc in all_docs %}
             {
