@@ -12,7 +12,7 @@ class DailyReportPDFView(View):
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="reporte_diario_{date.today()}.pdf"'
         
-        doc = SimpleDocTemplate(response, pagesize=letter)
+        pdf_doc = SimpleDocTemplate(response, pagesize=letter)
         elements = []
         styles = getSampleStyleSheet()
         
@@ -162,5 +162,5 @@ class DailyReportPDFView(View):
         else:
             elements.append(Paragraph("No hay checklists realizados hoy", styles['Normal']))
         
-        doc.build(elements)
+        pdf_doc.build(elements)
         return response
