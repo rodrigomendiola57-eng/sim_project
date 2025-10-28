@@ -3,7 +3,31 @@
 {% block title %}Tipos de Documento{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+        .page-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0 !important;
+        }
+        .page-header .btn {
+            width: 100%;
+            padding: 0.75rem;
+        }
+    }
+</style>
+
+<div class="page-header mb-4">
     <h1>Tipos de Documento</h1>
     <a href="{% url 'documenttype_add' %}" class="btn btn-primary">+ Agregar Tipo</a>
 </div>
