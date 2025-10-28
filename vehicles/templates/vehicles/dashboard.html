@@ -3,12 +3,45 @@
 {% block title %}Dashboard - SIM Project{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Dashboard</h1>
-    <a href="{% url 'daily_report_pdf' %}" class="btn btn-danger" target="_blank">
+<div class="dashboard-header mb-4">
+    <h1 class="mb-3">Dashboard</h1>
+    <a href="{% url 'daily_report_pdf' %}" class="btn btn-danger btn-pdf-report" target="_blank">
         <i class="bi bi-file-pdf"></i> Descargar Reporte Diario PDF
     </a>
 </div>
+
+<style>
+    /* Desktop: mantener diseño horizontal */
+    @media (min-width: 769px) {
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dashboard-header h1 {
+            margin-bottom: 0 !important;
+        }
+        .btn-pdf-report {
+            width: auto !important;
+        }
+    }
+    
+    /* Mobile: diseño vertical con mejor espaciado */
+    @media (max-width: 768px) {
+        .dashboard-header {
+            text-align: center;
+        }
+        .dashboard-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem !important;
+        }
+        .btn-pdf-report {
+            width: 100%;
+            padding: 0.875rem;
+            font-size: 1rem;
+        }
+    }
+</style>
 
 <!-- Checklists del Día -->
 <div class="row mb-4">
