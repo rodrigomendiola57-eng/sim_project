@@ -1,0 +1,34 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}{% if object %}Editar{% else %}Agregar{% endif %} Tipo de Servicio{% endblock %}
+
+{% block content %}
+<h1>{% if object %}Editar{% else %}Agregar{% endif %} Tipo de Servicio</h1>
+
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Nombre del Servicio</label>
+        <input type="text" name="name" class="form-control" value="{{ form.name.value|default:'' }}" required>
+        {% if form.name.errors %}
+            <div class="text-danger">{{ form.name.errors }}</div>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Descripción</label>
+        <textarea name="description" class="form-control" rows="3">{{ form.description.value|default:'' }}</textarea>
+        {% if form.description.errors %}
+            <div class="text-danger">{{ form.description.errors }}</div>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Costo Estimado ($)</label>
+        <input type="number" name="estimated_cost" class="form-control" step="0.01" value="{{ form.estimated_cost.value|default:'' }}">
+        {% if form.estimated_cost.errors %}
+            <div class="text-danger">{{ form.estimated_cost.errors }}</div>
+        {% endif %}
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'maintenancetype_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

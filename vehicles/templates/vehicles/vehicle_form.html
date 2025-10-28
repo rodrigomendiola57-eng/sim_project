@@ -1,18 +1,65 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{% if object %}Editar{% else %}Agregar{% endif %} Vehículo</title>
-</head>
-<body>
-    <h1>{% if object %}Editar{% else %}Agregar{% endif %} Vehículo</h1>
+{% extends 'vehicles/base.html' %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Guardar</button>
-    </form>
+{% block title %}{% if object %}Editar{% else %}Agregar{% endif %} Vehículo{% endblock %}
 
-    <a href="{% url 'vehicle_list' %}">Volver a la lista</a>
-</body>
-</html>
+{% block content %}
+<h1>{% if object %}Editar{% else %}Agregar{% endif %} Vehículo</h1>
+
+<form method="post" enctype="multipart/form-data" class="mt-4">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.plate.label }}</label>
+            {{ form.plate }}
+            {% if form.plate.errors %}
+                <div class="text-danger">{{ form.plate.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.brand.label }}</label>
+            {{ form.brand }}
+            {% if form.brand.errors %}
+                <div class="text-danger">{{ form.brand.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.model.label }}</label>
+            {{ form.model }}
+            {% if form.model.errors %}
+                <div class="text-danger">{{ form.model.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.year.label }}</label>
+            {{ form.year }}
+            {% if form.year.errors %}
+                <div class="text-danger">{{ form.year.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">{{ form.status.label }}</label>
+        {{ form.status }}
+        {% if form.status.errors %}
+            <div class="text-danger">{{ form.status.errors }}</div>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">{{ form.photo.label }}</label>
+        {{ form.photo }}
+        {% if form.photo.errors %}
+            <div class="text-danger">{{ form.photo.errors }}</div>
+        {% endif %}
+        {% if object.photo %}
+            <div class="mt-2">
+                <img src="{{ object.photo.url }}" alt="Foto actual" style="max-width: 200px;" class="img-thumbnail">
+                <p class="text-muted">Foto actual</p>
+            </div>
+        {% endif %}
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'vehicle_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

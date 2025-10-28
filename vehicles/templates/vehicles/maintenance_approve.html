@@ -1,0 +1,33 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Aprobar Mantenimiento{% endblock %}
+
+{% block content %}
+<h1>Aprobar Mantenimiento</h1>
+
+<div class="card mt-4">
+    <div class="card-header bg-success text-white">
+        <h5>Fase 3: Aprobación Económica</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Vehículo:</strong> {{ object.vehicle.plate }}</p>
+        <p><strong>Servicio:</strong> {{ object.maintenance_type.name }}</p>
+        <p><strong>Taller:</strong> {{ object.workshop.name }}</p>
+        <p><strong>Costo Cotizado:</strong> ${{ object.estimated_cost }}</p>
+    </div>
+</div>
+
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Aprobado por (Directivo)</label>
+        {{ form.approved_by }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Notas de Aprobación</label>
+        {{ form.approval_notes }}
+    </div>
+    <button type="submit" class="btn btn-success">Aprobar Mantenimiento</button>
+    <a href="{% url 'maintenance_detail' object.pk %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

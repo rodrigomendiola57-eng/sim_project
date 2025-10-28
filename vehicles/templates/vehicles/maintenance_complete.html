@@ -1,0 +1,41 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Completar Mantenimiento{% endblock %}
+
+{% block content %}
+<h1>Completar Mantenimiento</h1>
+
+<div class="card mt-4">
+    <div class="card-header bg-secondary text-white">
+        <h5>Registrar Ejecución del Servicio</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Vehículo:</strong> {{ object.vehicle.plate }}</p>
+        <p><strong>Servicio:</strong> {{ object.maintenance_type.name }}</p>
+        <p><strong>Taller:</strong> {{ object.workshop.name }}</p>
+        <p><strong>Costo Cotizado:</strong> ${{ object.estimated_cost }}</p>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="mt-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Fecha de Realización</label>
+        {{ form.date }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Costo Real</label>
+        {{ form.cost }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Factura (PDF o Imagen)</label>
+        {{ form.invoice_file }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Notas</label>
+        {{ form.notes }}
+    </div>
+    <button type="submit" class="btn btn-success">Completar Servicio</button>
+    <a href="{% url 'maintenance_detail' object.pk %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Eliminar Checklist{% endblock %}
+
+{% block content %}
+<h1>Eliminar Checklist</h1>
+
+<div class="alert alert-warning mt-4">
+    <h4>¿Estás seguro de eliminar este checklist?</h4>
+    <p><strong>{{ object.vehicle.plate }} - {{ object.driver_name }}</strong></p>
+    <p>Fecha: {{ object.inspection_date|date:"d/m/Y H:i" }}</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    <a href="{% url 'checklist_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Agregar Mantenimientos Múltiples{% endblock %}
+
+{% block content %}
+<h1>Agregar Múltiples Mantenimientos</h1>
+
+<form method="post" enctype="multipart/form-data" class="mt-4" id="maintenanceForm">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label class="form-label">Vehículo</label>
+        <select name="vehicle" class="form-control" required>
+            <option value="">Seleccione un vehículo</option>
+            {% for vehicle in vehicles %}
+                <option value="{{ vehicle.id }}">{{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+            <h5>Selecciona los Servicios</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for type in maintenance_types %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-check">
+                                <input class="form-check-input service-checkbox" type="checkbox" 
+                                       name="services" value="{{ type.id }}" 
+                                       id="service{{ type.id }}"
+                                       data-cost="{{ type.estimated_cost|default:'0' }}">
+                                <label class="form-check-label" for="service{{ type.id }}">
+                                    <strong>{{ type.name }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ type.description }}</small>
+                                    <br>
+                                    <span class="badge bg-success">Costo: ${{ type.estimated_cost|default:'0' }}</span>
+                                </label>
+                            </div>
+                            <div class="mt-2" id="fields{{ type.id }}" style="display:none;">
+                                <label class="form-label">Detectado por</label>
+                                <input type="text" name="detected_by_{{ type.id }}" class="form-control form-control-sm mb-2" placeholder="Nombre del responsable">
+                                <label class="form-label">Descripción del Problema</label>
+                                <textarea name="problem_{{ type.id }}" class="form-control form-control-sm" rows="3" placeholder="Describe el problema detectado"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+
+    <button type="submit" class="btn btn-success btn-lg">Guardar Mantenimientos</button>
+    <a href="{% url 'maintenance_list' %}" class="btn btn-secondary btn-lg">Cancelar</a>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.service-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const serviceId = this.value;
+            const fieldsDiv = document.getElementById('fields' + serviceId);
+            
+            if (this.checked) {
+                fieldsDiv.style.display = 'block';
+            } else {
+                fieldsDiv.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Detalle Mantenimiento{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Detalle de Mantenimiento</h1>
+    <a href="{% url 'maintenance_list' %}" class="btn btn-secondary">Volver</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Información General</h5>
+                <span class="badge 
+                    {% if maintenance.status == 'Detectado' %}bg-warning
+                    {% elif maintenance.status == 'Cotizado' %}bg-info
+                    {% elif maintenance.status == 'Aprobado' %}bg-success
+                    {% elif maintenance.status == 'Rechazado' %}bg-danger
+                    {% elif maintenance.status == 'Completado' %}bg-secondary
+                    {% endif %}">
+                    {{ maintenance.status }}
+                </span>
+            </div>
+            <div class="card-body">
+                <p><strong>Vehículo:</strong> {{ maintenance.vehicle.plate }} - {{ maintenance.vehicle.brand }} {{ maintenance.vehicle.model }}</p>
+                <p><strong>Tipo de Servicio:</strong> {{ maintenance.maintenance_type.name }}</p>
+                <p><strong>Detectado por:</strong> {{ maintenance.detected_by }}</p>
+                <p><strong>Fecha de Detección:</strong> {{ maintenance.detection_date|date:"d/m/Y" }}</p>
+                <p><strong>Descripción del Problema:</strong></p>
+                <p class="bg-light p-3 rounded">{{ maintenance.problem_description }}</p>
+            </div>
+        </div>
+
+        {% if maintenance.status != 'Detectado' %}
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5>Cotización</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Taller:</strong> {{ maintenance.workshop.name|default:"-" }}</p>
+                <p><strong>Fecha de Cotización:</strong> {{ maintenance.quote_date|date:"d/m/Y"|default:"-" }}</p>
+                <p><strong>Costo Cotizado:</strong> ${{ maintenance.estimated_cost|default:"0" }}</p>
+                {% if maintenance.quote_file %}
+                <p><strong>Archivo:</strong> <a href="{{ maintenance.quote_file.url }}" target="_blank" class="btn btn-sm btn-info">Ver Cotización</a></p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if maintenance.status == 'Aprobado' or maintenance.status == 'Rechazado' or maintenance.status == 'Completado' %}
+        <div class="card mb-4">
+            <div class="card-header {% if maintenance.status == 'Aprobado' or maintenance.status == 'Completado' %}bg-success{% else %}bg-danger{% endif %} text-white">
+                <h5>Aprobación</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Estado:</strong> {{ maintenance.status }}</p>
+                <p><strong>Aprobado/Rechazado por:</strong> {{ maintenance.approved_by }}</p>
+                <p><strong>Fecha:</strong> {{ maintenance.approval_date|date:"d/m/Y" }}</p>
+                <p><strong>Notas:</strong> {{ maintenance.approval_notes|default:"-" }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if maintenance.status == 'Completado' %}
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5>Ejecución</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Fecha de Realización:</strong> {{ maintenance.date|date:"d/m/Y" }}</p>
+                <p><strong>Costo Real:</strong> ${{ maintenance.cost }}</p>
+                {% if maintenance.invoice_file %}
+                <p><strong>Factura:</strong> <a href="{{ maintenance.invoice_file.url }}" target="_blank" class="btn btn-sm btn-secondary">Ver Factura</a></p>
+                {% endif %}
+                {% if maintenance.notes %}
+                <p><strong>Notas:</strong> {{ maintenance.notes }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>Acciones</h5>
+            </div>
+            <div class="card-body">
+                {% if maintenance.status == 'Detectado' %}
+                <a href="{% url 'maintenance_quote' maintenance.pk %}" class="btn btn-info w-100 mb-2">Agregar Cotización</a>
+                {% elif maintenance.status == 'Cotizado' %}
+                <a href="{% url 'maintenance_approve' maintenance.pk %}" class="btn btn-success w-100 mb-2">Aprobar</a>
+                <a href="{% url 'maintenance_reject' maintenance.pk %}" class="btn btn-danger w-100 mb-2">Rechazar</a>
+                {% elif maintenance.status == 'Aprobado' %}
+                <a href="{% url 'maintenance_complete' maintenance.pk %}" class="btn btn-secondary w-100 mb-2">Completar Servicio</a>
+                {% endif %}
+                <a href="{% url 'maintenance_delete' maintenance.pk %}" class="btn btn-outline-danger w-100">Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

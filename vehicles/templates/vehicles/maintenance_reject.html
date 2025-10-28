@@ -1,0 +1,34 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Rechazar Mantenimiento{% endblock %}
+
+{% block content %}
+<h1>Rechazar Mantenimiento</h1>
+
+<div class="alert alert-danger">
+    <h5>¿Estás seguro de rechazar este mantenimiento?</h5>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <p><strong>Vehículo:</strong> {{ object.vehicle.plate }}</p>
+        <p><strong>Servicio:</strong> {{ object.maintenance_type.name }}</p>
+        <p><strong>Taller:</strong> {{ object.workshop.name }}</p>
+        <p><strong>Costo Cotizado:</strong> ${{ object.estimated_cost }}</p>
+    </div>
+</div>
+
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Rechazado por (Directivo)</label>
+        {{ form.approved_by }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Motivo del Rechazo</label>
+        {{ form.approval_notes }}
+    </div>
+    <button type="submit" class="btn btn-danger">Rechazar Mantenimiento</button>
+    <a href="{% url 'maintenance_detail' object.pk %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

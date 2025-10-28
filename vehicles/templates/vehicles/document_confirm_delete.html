@@ -1,11 +1,19 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Eliminar Documento{% endblock %}
+
 {% block content %}
 <h1>Eliminar Documento</h1>
-<p>¿Seguro que deseas eliminar "{{ object }}"?</p>
+
+<div class="alert alert-warning mt-4">
+    <h4>¿Estás seguro de eliminar este documento?</h4>
+    <p><strong>{{ object.doc_type }} - {{ object.vehicle.plate }}</strong></p>
+    <p>Esta acción no se puede deshacer.</p>
+</div>
 
 <form method="post">
-  {% csrf_token %}
-  <button type="submit">Sí, eliminar</button>
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    <a href="{% url 'document_list' %}" class="btn btn-secondary">Cancelar</a>
 </form>
-
-<a href="{% url 'document_list' %}">Cancelar</a>
 {% endblock %}

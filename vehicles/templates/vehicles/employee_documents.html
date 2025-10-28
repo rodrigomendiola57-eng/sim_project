@@ -1,0 +1,70 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Documentos de Empleados{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Documentos de Empleados</h1>
+
+{% if drivers %}
+    {% for driver in drivers %}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ driver.full_name }} - {{ driver.position }}</h5>
+            <span class="badge {% if driver.status == 'Activo' %}bg-success{% elif driver.status == 'Vacaciones' %}bg-warning{% else %}bg-secondary{% endif %}">
+                {{ driver.status }}
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <strong>Teléfono:</strong> {{ driver.phone }}
+                </div>
+                <div class="col-md-4">
+                    <strong>Licencia:</strong> {{ driver.license_number }}
+                </div>
+                <div class="col-md-4">
+                    <strong>Vencimiento:</strong> {{ driver.license_expiry|date:"d/m/Y" }}
+                </div>
+            </div>
+            
+            {% if driver.documents.all %}
+            <h6 class="mt-3 mb-3">Documentos ({{ driver.documents.count }})</h6>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Documento</th>
+                            <th>Descripción</th>
+                            <th>Fecha de Carga</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in driver.documents.all %}
+                        <tr>
+                            <td><strong>{{ doc.document_type }}</strong></td>
+                            <td>{{ doc.description|default:"-" }}</td>
+                            <td>{{ doc.upload_date|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <a href="{{ doc.document_file.url }}" target="_blank" class="btn btn-sm btn-info">Ver</a>
+                                <a href="{% url 'driver_detail' driver.pk %}" class="btn btn-sm btn-secondary">Ir a Empleado</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-warning mb-0">
+                <small>No hay documentos cargados para este empleado</small>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+<div class="alert alert-info">
+    No hay empleados registrados. <a href="{% url 'driver_create' %}">Agregar el primero</a>
+</div>
+{% endif %}
+{% endblock %}

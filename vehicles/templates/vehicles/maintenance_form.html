@@ -1,18 +1,51 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{% if object %}Editar{% else %}Agregar{% endif %} Mantenimiento</title>
-</head>
-<body>
-    <h1>{% if object %}Editar{% else %}Agregar{% endif %} Mantenimiento</h1>
+{% extends 'vehicles/base.html' %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Guardar</button>
-    </form>
+{% block title %}{% if object %}Editar{% else %}Agregar{% endif %} Mantenimiento{% endblock %}
 
-    <a href="{% url 'maintenance_list' %}">Volver a la lista</a>
-</body>
-</html>
+{% block content %}
+<h1>{% if object %}Editar{% else %}Agregar{% endif %} Mantenimiento</h1>
+
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">{{ form.vehicle.label }}</label>
+        {{ form.vehicle }}
+        {% if form.vehicle.errors %}
+            <div class="text-danger">{{ form.vehicle.errors }}</div>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">{{ form.maintenance_type.label }}</label>
+        {{ form.maintenance_type }}
+        {% if form.maintenance_type.errors %}
+            <div class="text-danger">{{ form.maintenance_type.errors }}</div>
+        {% endif %}
+        <small class="form-text text-muted">Selecciona el tipo de servicio</small>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.date.label }}</label>
+            {{ form.date }}
+            {% if form.date.errors %}
+                <div class="text-danger">{{ form.date.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.cost.label }}</label>
+            {{ form.cost }}
+            {% if form.cost.errors %}
+                <div class="text-danger">{{ form.cost.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">{{ form.notes.label }}</label>
+        {{ form.notes }}
+        {% if form.notes.errors %}
+            <div class="text-danger">{{ form.notes.errors }}</div>
+        {% endif %}
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'maintenance_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

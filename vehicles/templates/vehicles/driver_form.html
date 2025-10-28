@@ -1,0 +1,63 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}{% if object %}Editar{% else %}Agregar{% endif %} Empleado{% endblock %}
+
+{% block content %}
+<h1>{% if object %}Editar{% else %}Agregar{% endif %} Empleado</h1>
+
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Nombre Completo</label>
+            <input type="text" name="full_name" class="form-control" value="{{ form.full_name.value|default:'' }}" required>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Puesto</label>
+            <input type="text" name="position" class="form-control" value="{{ form.position.value|default:'Chofer' }}" required>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Teléfono</label>
+            <input type="text" name="phone" class="form-control" value="{{ form.phone.value|default:'' }}" required>
+        </div>
+        <div class="col-md-2 mb-3">
+            <label class="form-label">Estado</label>
+            <select name="status" class="form-select" required>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+                <option value="Vacaciones">Vacaciones</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Correo Electrónico</label>
+            <input type="email" name="email" class="form-control" value="{{ form.email.value|default:'' }}">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Dirección</label>
+            <input type="text" name="address" class="form-control" value="{{ form.address.value|default:'' }}">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Número de Licencia</label>
+            <input type="text" name="license_number" class="form-control" value="{{ form.license_number.value|default:'' }}" required>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Vencimiento de Licencia</label>
+            <input type="date" name="license_expiry" class="form-control" value="{{ form.license_expiry.value|default:'' }}" required>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Fecha de Contratación</label>
+            <input type="date" name="hire_date" class="form-control" value="{{ form.hire_date.value|default:'' }}" required>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Notas</label>
+        <textarea name="notes" class="form-control" rows="3">{{ form.notes.value|default:'' }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'driver_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

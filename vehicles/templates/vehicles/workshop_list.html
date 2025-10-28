@@ -1,0 +1,42 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Talleres{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Talleres</h1>
+    <a href="{% url 'workshop_add' %}" class="btn btn-primary">+ Agregar Taller</a>
+</div>
+
+{% if workshops %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Dirección</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for workshop in workshops %}
+            <tr>
+                <td><strong>{{ workshop.name }}</strong></td>
+                <td>{{ workshop.phone }}</td>
+                <td>{{ workshop.address }}</td>
+                <td>
+                    <a href="{% url 'workshop_update' workshop.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'workshop_delete' workshop.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    No hay talleres registrados. <a href="{% url 'workshop_add' %}">Agregar el primero</a>
+</div>
+{% endif %}
+{% endblock %}

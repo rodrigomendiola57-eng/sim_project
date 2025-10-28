@@ -1,0 +1,54 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Checklists de Inspección{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Checklists de Inspección</h1>
+    <a href="{% url 'checklist_create' %}" class="btn btn-primary">+ Nueva Inspección</a>
+</div>
+
+{% if checklists %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Vehículo</th>
+                <th>Conductor</th>
+                <th>Odómetro</th>
+                <th>Estado General</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for checklist in checklists %}
+            <tr>
+                <td>{{ checklist.inspection_date|date:"d/m/Y H:i" }}</td>
+                <td><strong>{{ checklist.vehicle.plate }}</strong></td>
+                <td>{{ checklist.driver_name }}</td>
+                <td>{{ checklist.odometer_reading }} km</td>
+                <td>
+                    {% if checklist.overall_status == 'Bueno' %}
+                        <span class="badge bg-success">✓ Bueno</span>
+                    {% elif checklist.overall_status == 'Regular' %}
+                        <span class="badge bg-warning">⚠ Regular</span>
+                    {% else %}
+                        <span class="badge bg-danger">✗ Malo</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'checklist_detail' checklist.pk %}" class="btn btn-sm btn-info">Ver Detalle</a>
+                    <a href="{% url 'checklist_delete' checklist.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    No hay checklists registrados. <a href="{% url 'checklist_create' %}">Crear el primero</a>
+</div>
+{% endif %}
+{% endblock %}

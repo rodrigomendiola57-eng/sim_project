@@ -1,0 +1,252 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Checklist de Inspección{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="mb-0">Checklist de Inspección Vehicular</h2>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Vehículo</label>
+                    <select name="vehicle" class="form-select" required>
+                        <option value="">Seleccione un vehículo</option>
+                        {% for vehicle in vehicles %}
+                            <option value="{{ vehicle.id }}">{{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Nombre del Conductor</label>
+                    <input type="text" name="driver_name" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Odómetro (km)</label>
+                    <input type="number" name="odometer_reading" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Combustible</label>
+                    <select name="fuel_level" class="form-select" required>
+                        <option value="Lleno">Lleno</option>
+                        <option value="3/4">3/4</option>
+                        <option value="1/2">1/2</option>
+                        <option value="1/4">1/4</option>
+                        <option value="Vacío">Vacío</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Inspección Exterior</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Estado de Llantas</label>
+                            <select name="tires_condition" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Presión de Llantas</label>
+                            <select name="tires_pressure" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Luces</label>
+                            <select name="lights" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Espejos</label>
+                            <select name="mirrors" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Parabrisas</label>
+                            <select name="windshield" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Limpiaparabrisas</label>
+                            <select name="wipers" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Carrocería</label>
+                            <select name="body_damage" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Inspección Interior</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Cinturones de Seguridad</label>
+                            <select name="seat_belts" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Claxon</label>
+                            <select name="horn" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Luces del Tablero</label>
+                            <select name="dashboard_lights" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Aire Acondicionado</label>
+                            <select name="air_conditioning" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Inspección Mecánica</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Frenos</label>
+                            <select name="brakes" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Motor</label>
+                            <select name="engine" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Nivel de Aceite</label>
+                            <select name="oil_level" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Nivel de Refrigerante</label>
+                            <select name="coolant_level" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Batería</label>
+                            <select name="battery" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Equipo de Seguridad</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Extintor</label>
+                            <select name="fire_extinguisher" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Botiquín</label>
+                            <select name="first_aid_kit" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Triángulos de Seguridad</label>
+                            <select name="warning_triangles" class="form-select" required>
+                                <option value="Bueno">✓ Bueno</option>
+                                <option value="Regular">⚠ Regular</option>
+                                <option value="Malo">✗ Malo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Observaciones</h5>
+                </div>
+                <div class="card-body">
+                    <textarea name="observations" class="form-control" rows="4" placeholder="Ingrese cualquier observación adicional..."></textarea>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{% url 'checklist_list' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-success btn-lg">Guardar Checklist</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

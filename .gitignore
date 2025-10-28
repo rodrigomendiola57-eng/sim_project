@@ -1,0 +1,8 @@
+*.pyc
+__pycache__/
+db_data/
+media/
+staticfiles/
+logs/
+.env
+*.log

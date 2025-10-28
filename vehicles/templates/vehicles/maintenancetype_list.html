@@ -1,0 +1,42 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Tipos de Servicio - SIM Project{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Tipos de Servicio</h1>
+    <a href="{% url 'maintenancetype_add' %}" class="btn btn-primary">+ Agregar Tipo de Servicio</a>
+</div>
+
+{% if maintenance_types %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Costo Estimado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for type in maintenance_types %}
+            <tr>
+                <td><strong>{{ type.name }}</strong></td>
+                <td>{{ type.description|truncatewords:10 }}</td>
+                <td>${{ type.estimated_cost|default:"N/A" }}</td>
+                <td>
+                    <a href="{% url 'maintenancetype_update' type.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'maintenancetype_delete' type.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    No hay tipos de servicio registrados. <a href="{% url 'maintenancetype_add' %}">Agregar el primero</a>
+</div>
+{% endif %}
+{% endblock %}

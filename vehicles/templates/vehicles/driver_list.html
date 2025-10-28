@@ -1,0 +1,49 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Lista de Empleados{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Lista de Empleados</h1>
+    <a href="{% url 'driver_create' %}" class="btn btn-primary">+ Agregar Empleado</a>
+</div>
+
+{% if drivers %}
+<div class="row">
+    {% for driver in drivers %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">{{ driver.full_name }}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Puesto:</strong> {{ driver.position }}</p>
+                <p><strong>Teléfono:</strong> {{ driver.phone }}</p>
+                <p><strong>Licencia:</strong> {{ driver.license_number }}</p>
+                <p><strong>Vencimiento:</strong> {{ driver.license_expiry|date:"d/m/Y" }}</p>
+                <p><strong>Estado:</strong> 
+                    {% if driver.status == 'Activo' %}
+                        <span class="badge bg-success">{{ driver.status }}</span>
+                    {% elif driver.status == 'Vacaciones' %}
+                        <span class="badge bg-warning">{{ driver.status }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ driver.status }}</span>
+                    {% endif %}
+                </p>
+                <p><strong>Documentos:</strong> {{ driver.documents.count }}</p>
+                <div class="btn-group" role="group">
+                    <a href="{% url 'driver_detail' driver.pk %}" class="btn btn-sm btn-info">Ver Detalle</a>
+                    <a href="{% url 'driver_update' driver.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'driver_delete' driver.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    No hay empleados registrados. <a href="{% url 'driver_create' %}">Agregar el primero</a>
+</div>
+{% endif %}
+{% endblock %}

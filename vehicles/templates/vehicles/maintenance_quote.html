@@ -1,0 +1,37 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Agregar Cotización{% endblock %}
+
+{% block content %}
+<h1>Agregar Cotización</h1>
+
+<div class="card mt-4">
+    <div class="card-header bg-info text-white">
+        <h5>Fase 2: Cotización</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Vehículo:</strong> {{ object.vehicle.plate }}</p>
+        <p><strong>Servicio:</strong> {{ object.maintenance_type.name }}</p>
+        <p><strong>Problema:</strong> {{ object.problem_description }}</p>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="mt-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Taller</label>
+        {{ form.workshop }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Costo Cotizado</label>
+        {{ form.estimated_cost }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Archivo de Cotización (PDF, Imagen o cualquier archivo)</label>
+        {{ form.quote_file }}
+        <small class="text-muted d-block">Puedes subir PDF, imágenes o cualquier tipo de archivo</small>
+    </div>
+    <button type="submit" class="btn btn-success">Guardar Cotización</button>
+    <a href="{% url 'maintenance_detail' object.pk %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

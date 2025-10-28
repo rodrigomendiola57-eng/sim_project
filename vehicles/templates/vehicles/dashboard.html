@@ -1,0 +1,287 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Dashboard - SIM Project{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Dashboard</h1>
+    <a href="{% url 'daily_report_pdf' %}" class="btn btn-danger" target="_blank">
+        <i class="bi bi-file-pdf"></i> Descargar Reporte Diario PDF
+    </a>
+</div>
+
+<!-- Checklists del Día -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5><i class="bi bi-clipboard-check"></i> Checklists de Hoy ({{ today_checklists.count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if today_checklists %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Vehículo</th>
+                                <th>Conductor</th>
+                                <th>Odómetro</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for checklist in today_checklists %}
+                            <tr>
+                                <td>{{ checklist.inspection_date|date:"H:i" }}</td>
+                                <td><strong>{{ checklist.vehicle.plate }}</strong></td>
+                                <td>{{ checklist.driver_name }}</td>
+                                <td>{{ checklist.odometer_reading }} km</td>
+                                <td>
+                                    {% if checklist.overall_status == 'Bueno' %}
+                                        <span class="badge bg-success">✓ Bueno</span>
+                                    {% elif checklist.overall_status == 'Regular' %}
+                                        <span class="badge bg-warning">⚠ Regular</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">✗ Malo</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'checklist_detail' checklist.pk %}" class="btn btn-sm btn-outline-info">Ver</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-light mb-0">
+                    <p class="mb-2">No hay checklists registrados hoy.</p>
+                    <a href="{% url 'checklist_create' %}" class="btn btn-sm btn-success">Crear Checklist</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mantenimientos del Mes -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h5><i class="bi bi-wrench"></i> Mantenimientos de {{ current_month }} ({{ month_maintenances.count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if month_maintenances %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Vehículo</th>
+                                <th>Servicio</th>
+                                <th>Costo</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for maint in month_maintenances %}
+                            <tr {% if maint.is_past %}class="table-secondary"{% endif %}>
+                                <td>{{ maint.date }}</td>
+                                <td><strong>{{ maint.vehicle.plate }}</strong></td>
+                                <td>{{ maint.maintenance_type.name }}</td>
+                                <td>${{ maint.cost }}</td>
+                                <td>
+                                    {% if maint.is_past %}
+                                        <span class="badge bg-secondary">✓ Realizado</span>
+                                    {% elif maint.days_until == 0 %}
+                                        <span class="badge bg-warning">Hoy</span>
+                                    {% elif maint.days_until > 0 %}
+                                        <span class="badge bg-primary">En {{ maint.days_until }} día{{ maint.days_until|pluralize }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'maintenance_update' maint.pk %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-info">
+                                <td colspan="3"><strong>Total del Mes</strong></td>
+                                <td colspan="3"><strong>${{ month_total_cost }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No hay mantenimientos programados para este mes</p>
+                <a href="{% url 'maintenance_bulk_add' %}" class="btn btn-primary">Programar Mantenimientos</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alertas de Documentos -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5><i class="bi bi-exclamation-triangle"></i> Documentos Vencidos ({{ expired_docs.count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if expired_docs %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Vehículo</th>
+                                <th>Tipo</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Días Vencido</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for doc in expired_docs %}
+                            <tr>
+                                <td>{{ doc.vehicle.plate }}</td>
+                                <td>{{ doc.doc_type }}</td>
+                                <td>{{ doc.expiry_date }}</td>
+                                <td><span class="badge bg-danger">{{ doc.days_expired }} días</span></td>
+                                <td><a href="{% url 'document_update' doc.pk %}" class="btn btn-sm btn-warning">Renovar</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No hay documentos vencidos</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning">
+                <h5><i class="bi bi-clock"></i> Documentos por Vencer (próximos 30 días) ({{ expiring_soon_docs.count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if expiring_soon_docs %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Vehículo</th>
+                                <th>Tipo</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Días Restantes</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for doc in expiring_soon_docs %}
+                            <tr>
+                                <td>{{ doc.vehicle.plate }}</td>
+                                <td>{{ doc.doc_type }}</td>
+                                <td>{{ doc.expiry_date }}</td>
+                                <td><span class="badge bg-warning">{{ doc.days_remaining }} días</span></td>
+                                <td><a href="{% url 'document_update' doc.pk %}" class="btn btn-sm btn-primary">Renovar</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No hay documentos próximos a vencer</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Vehículos</h5>
+                <h2>{{ total_vehicles }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Activos</h5>
+                <h2>{{ active_vehicles }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">En Mantenimiento</h5>
+                <h2>{{ maintenance_vehicles }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Documentos</h5>
+                <h2>{{ total_documents }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Calendario de Vencimientos -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5>Calendario de Vencimientos</h5>
+            </div>
+            <div class="card-body">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,dayGridWeek'
+        },
+        events: [
+            {% for doc in all_docs %}
+            {
+                title: '{{ doc.vehicle.plate }} - {{ doc.doc_type }}',
+                start: '{{ doc.expiry_date|date:"Y-m-d" }}',
+                color: '{% if doc.is_expired %}#dc3545{% elif doc.days_remaining <= 30 %}#ffc107{% else %}#28a745{% endif %}',
+                url: '{% url "document_update" doc.pk %}'
+            },
+            {% endfor %}
+        ]
+    });
+    calendar.render();
+});
+</script>
+{% endblock %}

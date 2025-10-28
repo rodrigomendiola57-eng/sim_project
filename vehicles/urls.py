@@ -1,23 +1,84 @@
 from django.urls import path
-from . import views
+from .views import (
+    VehicleListView, VehicleCreateView, VehicleUpdateView, VehicleDeleteView,
+    DocumentListView, DocumentCreateView, DocumentUpdateView, DocumentDeleteView,
+    MaintenanceListView, MaintenanceCreateView, MaintenanceUpdateView, MaintenanceDeleteView,
+    MaintenanceTypeListView, MaintenanceTypeCreateView, MaintenanceTypeUpdateView, MaintenanceTypeDeleteView,
+    MaintenanceBulkCreateView
+)
+from .views_dashboard import DashboardView
+from .views_checklist import ChecklistListView, ChecklistCreateView, ChecklistDetailView, ChecklistDeleteView
+from .views_pdf import MaintenancePDFView
+from .views_documenttype import DocumentTypeListView, DocumentTypeCreateView, DocumentTypeUpdateView, DocumentTypeDeleteView
+from .views_driver import DriverListView, DriverCreateView, DriverUpdateView, DriverDetailView, DriverDeleteView, DriverDocumentUploadView, DriverDocumentDeleteView
+from .views_employee_documents import EmployeeDocumentsView
+from .views_daily_report import DailyReportPDFView
+from .views_workshop import WorkshopListView, WorkshopCreateView, WorkshopUpdateView, WorkshopDeleteView
+from .views_maintenance_phases import MaintenanceDetailView, MaintenanceQuoteView, MaintenanceApproveView, MaintenanceRejectView, MaintenanceCompleteView
+from .views_vehicle_documents import VehicleDocumentsView
 
 urlpatterns = [
-    # ---------- VEHICLES ----------
-    path('vehicles/', views.VehicleListView.as_view(), name='vehicle_list'),
-    path('vehicles/add/', views.VehicleCreateView.as_view(), name='vehicle_add'),
-    path('vehicles/<int:pk>/edit/', views.VehicleUpdateView.as_view(), name='vehicle_edit'),
-    path('vehicles/<int:pk>/delete/', views.VehicleDeleteView.as_view(), name='vehicle_delete'),
+    # ----------------- DASHBOARD -----------------
+    path('', DashboardView.as_view(), name='dashboard'),
+    path('daily-report/pdf/', DailyReportPDFView.as_view(), name='daily_report_pdf'),
+    
+    # ----------------- VEHICLES -----------------
+    path('vehicles/', VehicleListView.as_view(), name='vehicle_list'),
+    path('add/', VehicleCreateView.as_view(), name='vehicle_add'),
+    path('update/<int:pk>/', VehicleUpdateView.as_view(), name='vehicle_update'),
+    path('delete/<int:pk>/', VehicleDeleteView.as_view(), name='vehicle_delete'),
 
-    # ---------- DOCUMENTS ----------
-    path('documents/', views.DocumentListView.as_view(), name='document_list'),
-    path('documents/add/', views.DocumentCreateView.as_view(), name='document_add'),
-    path('documents/<int:pk>/edit/', views.DocumentUpdateView.as_view(), name='document_edit'),
-    path('documents/<int:pk>/delete/', views.DocumentDeleteView.as_view(), name='document_delete'),
+    # ----------------- DOCUMENT TYPES -----------------
+    path('document-types/', DocumentTypeListView.as_view(), name='documenttype_list'),
+    path('document-types/add/', DocumentTypeCreateView.as_view(), name='documenttype_add'),
+    path('document-types/update/<int:pk>/', DocumentTypeUpdateView.as_view(), name='documenttype_update'),
+    path('document-types/delete/<int:pk>/', DocumentTypeDeleteView.as_view(), name='documenttype_delete'),
 
-    # ---------- MAINTENANCE ----------
-    path('maintenance/', views.MaintenanceListView.as_view(), name='maintenance_list'),
-    path('maintenance/add/', views.MaintenanceCreateView.as_view(), name='maintenance_add'),
-    path('maintenance/<int:pk>/edit/', views.MaintenanceUpdateView.as_view(), name='maintenance_edit'),
-    path('maintenance/<int:pk>/delete/', views.MaintenanceDeleteView.as_view(), name='maintenance_delete'),
+    # ----------------- DOCUMENTS -----------------
+    path('documents/', DocumentListView.as_view(), name='document_list'),
+    path('documents/add/', DocumentCreateView.as_view(), name='document_add'),
+    path('documents/update/<int:pk>/', DocumentUpdateView.as_view(), name='document_update'),
+    path('documents/delete/<int:pk>/', DocumentDeleteView.as_view(), name='document_delete'),
+    path('documents/vehicles/', VehicleDocumentsView.as_view(), name='vehicle_documents'),
+    path('documents/employees/', EmployeeDocumentsView.as_view(), name='employee_documents'),
+
+    # ----------------- MAINTENANCE TYPES -----------------
+    path('maintenance-types/', MaintenanceTypeListView.as_view(), name='maintenancetype_list'),
+    path('maintenance-types/add/', MaintenanceTypeCreateView.as_view(), name='maintenancetype_add'),
+    path('maintenance-types/update/<int:pk>/', MaintenanceTypeUpdateView.as_view(), name='maintenancetype_update'),
+    path('maintenance-types/delete/<int:pk>/', MaintenanceTypeDeleteView.as_view(), name='maintenancetype_delete'),
+
+    # ----------------- WORKSHOPS -----------------
+    path('workshops/', WorkshopListView.as_view(), name='workshop_list'),
+    path('workshops/add/', WorkshopCreateView.as_view(), name='workshop_add'),
+    path('workshops/update/<int:pk>/', WorkshopUpdateView.as_view(), name='workshop_update'),
+    path('workshops/delete/<int:pk>/', WorkshopDeleteView.as_view(), name='workshop_delete'),
+
+    # ----------------- MAINTENANCE -----------------
+    path('maintenance/', MaintenanceListView.as_view(), name='maintenance_list'),
+    path('maintenance/add/', MaintenanceCreateView.as_view(), name='maintenance_add'),
+    path('maintenance/bulk-add/', MaintenanceBulkCreateView.as_view(), name='maintenance_bulk_add'),
+    path('maintenance/<int:pk>/', MaintenanceDetailView.as_view(), name='maintenance_detail'),
+    path('maintenance/<int:pk>/quote/', MaintenanceQuoteView.as_view(), name='maintenance_quote'),
+    path('maintenance/<int:pk>/approve/', MaintenanceApproveView.as_view(), name='maintenance_approve'),
+    path('maintenance/<int:pk>/reject/', MaintenanceRejectView.as_view(), name='maintenance_reject'),
+    path('maintenance/<int:pk>/complete/', MaintenanceCompleteView.as_view(), name='maintenance_complete'),
+    path('maintenance/update/<int:pk>/', MaintenanceUpdateView.as_view(), name='maintenance_update'),
+    path('maintenance/delete/<int:pk>/', MaintenanceDeleteView.as_view(), name='maintenance_delete'),
+    path('maintenance/pdf/', MaintenancePDFView.as_view(), name='maintenance_pdf'),
+
+    # ----------------- CHECKLISTS -----------------
+    path('checklists/', ChecklistListView.as_view(), name='checklist_list'),
+    path('checklists/create/', ChecklistCreateView.as_view(), name='checklist_create'),
+    path('checklists/<int:pk>/', ChecklistDetailView.as_view(), name='checklist_detail'),
+    path('checklists/<int:pk>/delete/', ChecklistDeleteView.as_view(), name='checklist_delete'),
+
+    # ----------------- DRIVERS -----------------
+    path('drivers/', DriverListView.as_view(), name='driver_list'),
+    path('drivers/create/', DriverCreateView.as_view(), name='driver_create'),
+    path('drivers/<int:pk>/', DriverDetailView.as_view(), name='driver_detail'),
+    path('drivers/<int:pk>/update/', DriverUpdateView.as_view(), name='driver_update'),
+    path('drivers/<int:pk>/delete/', DriverDeleteView.as_view(), name='driver_delete'),
+    path('drivers/<int:pk>/upload-document/', DriverDocumentUploadView.as_view(), name='driver_document_upload'),
+    path('driver-documents/<int:pk>/delete/', DriverDocumentDeleteView.as_view(), name='driver_document_delete'),
 ]
-

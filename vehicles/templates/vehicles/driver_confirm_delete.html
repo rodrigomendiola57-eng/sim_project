@@ -1,0 +1,19 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Eliminar Chofer{% endblock %}
+
+{% block content %}
+<h1>Eliminar Chofer</h1>
+
+<div class="alert alert-warning mt-4">
+    <h4>¿Estás seguro de eliminar este chofer?</h4>
+    <p><strong>{{ object.full_name }}</strong></p>
+    <p>Se eliminarán también todos sus documentos asociados.</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    <a href="{% url 'driver_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

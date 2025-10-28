@@ -1,18 +1,67 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{% if object %}Editar{% else %}Agregar{% endif %} Documento</title>
-</head>
-<body>
-    <h1>{% if object %}Editar{% else %}Agregar{% endif %} Documento</h1>
+{% extends 'vehicles/base.html' %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Guardar</button>
-    </form>
+{% block title %}{% if object %}Editar{% else %}Agregar{% endif %} Documento{% endblock %}
 
-    <a href="{% url 'document_list' %}">Volver a la lista</a>
-</body>
-</html>
+{% block content %}
+<h1>{% if object %}Editar{% else %}Agregar{% endif %} Documento</h1>
+
+<form method="post" enctype="multipart/form-data" class="mt-4">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <div class="mb-3">
+        <label class="form-label">{{ form.vehicle.label }}</label>
+        {{ form.vehicle }}
+        {% if form.vehicle.errors %}
+            <div class="text-danger">{{ form.vehicle.errors }}</div>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">{{ form.doc_type.label }}</label>
+        {{ form.doc_type }}
+        {% if form.doc_type.errors %}
+            <div class="text-danger">{{ form.doc_type.errors }}</div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.issue_date.label }}</label>
+            {{ form.issue_date }}
+            {% if form.issue_date.errors %}
+                <div class="text-danger">{{ form.issue_date.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.expiry_date.label }}</label>
+            {{ form.expiry_date }}
+            {% if form.expiry_date.errors %}
+                <div class="text-danger">{{ form.expiry_date.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">{{ form.document_number.label }}</label>
+        {{ form.document_number }}
+        {% if form.document_number.errors %}
+            <div class="text-danger">{{ form.document_number.errors }}</div>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">{{ form.document_file.label }}</label>
+        {{ form.document_file }}
+        {% if form.document_file.errors %}
+            <div class="text-danger">{{ form.document_file.errors }}</div>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">{{ form.notes.label }}</label>
+        {{ form.notes }}
+        {% if form.notes.errors %}
+            <div class="text-danger">{{ form.notes.errors }}</div>
+        {% endif %}
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'document_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

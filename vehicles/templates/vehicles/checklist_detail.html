@@ -1,0 +1,46 @@
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Detalle del Checklist{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Checklist de Inspección - {{ checklist.vehicle.plate }}</h2>
+        <p class="mb-0 text-muted">Conductor: {{ checklist.driver_name }} | Fecha: {{ checklist.inspection_date|date:"d/m/Y H:i" }}</p>
+    </div>
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <strong>Odómetro:</strong> {{ checklist.odometer_reading }} km
+            </div>
+            <div class="col-md-3">
+                <strong>Combustible:</strong> {{ checklist.fuel_level }}
+            </div>
+            <div class="col-md-3">
+                <strong>Estado General:</strong>
+                {% if checklist.overall_status == 'Bueno' %}
+                    <span class="badge bg-success">✓ Bueno</span>
+                {% elif checklist.overall_status == 'Regular' %}
+                    <span class="badge bg-warning">⚠ Regular</span>
+                {% else %}
+                    <span class="badge bg-danger">✗ Malo</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <h5>Exterior</h5>
+        <table class="table table-sm mb-4">
+            <tr><td>Llantas</td><td><span class="badge bg-{{ checklist.tires_condition|lower }}">{{ checklist.tires_condition }}</span></td></tr>
+            <tr><td>Presión Llantas</td><td><span class="badge bg-{{ checklist.tires_pressure|lower }}">{{ checklist.tires_pressure }}</span></td></tr>
+            <tr><td>Luces</td><td><span class="badge bg-{{ checklist.lights|lower }}">{{ checklist.lights }}</span></td></tr>
+        </table>
+
+        {% if checklist.observations %}
+        <h5>Observaciones</h5>
+        <p>{{ checklist.observations }}</p>
+        {% endif %}
+
+        <a href="{% url 'checklist_list' %}" class="btn btn-secondary">Volver</a>
+    </div>
+</div>
+{% endblock %}
