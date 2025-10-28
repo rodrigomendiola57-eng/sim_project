@@ -154,6 +154,83 @@
         .container {
             max-width: 1200px;
         }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            
+            .nav-link {
+                margin: 0.25rem 0;
+                padding: 0.5rem 1rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .btn-group .btn {
+                width: auto;
+            }
+            
+            .table {
+                font-size: 0.875rem;
+            }
+            
+            .table thead {
+                font-size: 0.75rem;
+            }
+            
+            h1 {
+                font-size: 1.75rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            /* Hacer tablas scrolleables en móvil */
+            .table-responsive {
+                border-radius: 8px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            }
+            
+            /* Mejorar dropdowns en móvil */
+            .dropdown-menu {
+                width: 100%;
+            }
+            
+            /* Espaciado mejorado */
+            .mt-5 {
+                margin-top: 2rem !important;
+            }
+            
+            .mb-5 {
+                margin-bottom: 2rem !important;
+            }
+        }
+        
+        /* Tablets */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 95%;
+            }
+        }
     </style>
 </head>
 <body>
