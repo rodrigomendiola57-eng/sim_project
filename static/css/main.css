@@ -469,29 +469,61 @@ h5 {
     color: white !important;
 }
 
-/* Tarjetas de estadísticas del dashboard con verde ICASA */
+/* Tarjetas de estadísticas del dashboard con verde ICASA uniforme */
 .card.text-white.bg-primary {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
     border: none;
     box-shadow: 0 4px 12px rgba(59, 170, 53, 0.3);
+    color: white !important;
+}
+
+.card.text-white.bg-primary .card-body,
+.card.text-white.bg-primary .card-title,
+.card.text-white.bg-primary h2,
+.card.text-white.bg-primary h5 {
+    color: white !important;
 }
 
 .card.text-white.bg-success {
-    background: linear-gradient(135deg, #2d9a2a, var(--primary-color)) !important;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
     border: none;
     box-shadow: 0 4px 12px rgba(59, 170, 53, 0.3);
+    color: white !important;
+}
+
+.card.text-white.bg-success .card-body,
+.card.text-white.bg-success .card-title,
+.card.text-white.bg-success h2,
+.card.text-white.bg-success h5 {
+    color: white !important;
 }
 
 .card.text-white.bg-warning {
-    background: linear-gradient(135deg, var(--warning-color), #d97706) !important;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
     border: none;
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 4px 12px rgba(59, 170, 53, 0.3);
+    color: white !important;
+}
+
+.card.text-white.bg-warning .card-body,
+.card.text-white.bg-warning .card-title,
+.card.text-white.bg-warning h2,
+.card.text-white.bg-warning h5 {
+    color: white !important;
 }
 
 .card.text-white.bg-info {
-    background: linear-gradient(135deg, var(--secondary-color), #005a2e) !important;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
     border: none;
-    box-shadow: 0 4px 12px rgba(0, 104, 55, 0.3);
+    box-shadow: 0 4px 12px rgba(59, 170, 53, 0.3);
+    color: white !important;
+}
+
+.card.text-white.bg-info .card-body,
+.card.text-white.bg-info .card-title,
+.card.text-white.bg-info h2,
+.card.text-white.bg-info h5 {
+    color: white !important;
 }
 
 .card.text-white:hover {
