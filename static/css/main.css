@@ -50,7 +50,7 @@ body {
 
 .navbar {
     background: linear-gradient(to right, #ffffff 0%, #f0fdf4 100%);
-    padding: 1.25rem 0;
+    padding: 1rem 0;
     border-bottom: 3px solid var(--primary-color);
     box-shadow: var(--shadow-md);
 }
@@ -71,15 +71,16 @@ body {
 }
 
 .logo-icon {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     background: white;
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6px;
-    box-shadow: 0 4px 12px rgba(59, 170, 53, 0.15);
+    padding: 8px;
+    box-shadow: 0 4px 16px rgba(59, 170, 53, 0.2);
+    border: 2px solid var(--accent-muted);
 }
 
 .logo-icon img {
@@ -438,6 +439,16 @@ h5 {
     border-width: 2px;
 }
 
+.card.border-warning {
+    border-color: var(--warning-color) !important;
+    border-width: 2px;
+}
+
+.card.border-danger {
+    border-color: var(--danger-color) !important;
+    border-width: 2px;
+}
+
 .card-header.bg-success {
     background: linear-gradient(135deg, var(--primary-color), #2d9a2a) !important;
     color: white !important;
@@ -446,6 +457,46 @@ h5 {
 .card-header.bg-info {
     background: linear-gradient(135deg, var(--secondary-color), #005a2e) !important;
     color: white !important;
+}
+
+.card-header.bg-warning {
+    background: linear-gradient(135deg, var(--warning-color), #d97706) !important;
+    color: white !important;
+}
+
+.card-header.bg-danger {
+    background: linear-gradient(135deg, var(--danger-color), #b91c1c) !important;
+    color: white !important;
+}
+
+/* Tarjetas de estadísticas del dashboard con verde ICASA */
+.card.text-white.bg-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    border: none;
+    box-shadow: 0 4px 12px rgba(59, 170, 53, 0.3);
+}
+
+.card.text-white.bg-success {
+    background: linear-gradient(135deg, #2d9a2a, var(--primary-color)) !important;
+    border: none;
+    box-shadow: 0 4px 12px rgba(59, 170, 53, 0.3);
+}
+
+.card.text-white.bg-warning {
+    background: linear-gradient(135deg, var(--warning-color), #d97706) !important;
+    border: none;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.card.text-white.bg-info {
+    background: linear-gradient(135deg, var(--secondary-color), #005a2e) !important;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 104, 55, 0.3);
+}
+
+.card.text-white:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(59, 170, 53, 0.4);
 }
 
 /* Table Responsive Wrapper */
