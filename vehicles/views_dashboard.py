@@ -1,10 +1,11 @@
 from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q, Sum
 from datetime import date, timedelta, datetime
 from calendar import monthrange
 from .models import Vehicle, Document, Maintenance, VehicleChecklist
 
-class DashboardView(TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'vehicles/dashboard.html'
 
     def get_context_data(self, **kwargs):

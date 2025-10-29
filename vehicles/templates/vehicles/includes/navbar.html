@@ -66,6 +66,13 @@
                         <i class="bi bi-people-fill"></i> Empleados
                     </a>
                 </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}" style="color: #dc2626 !important;">
+                        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                    </a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </div>
