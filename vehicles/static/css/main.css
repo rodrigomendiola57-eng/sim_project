@@ -167,6 +167,19 @@ body {
 
 .card-body {
     padding: 1.25rem;
+    color: var(--text-primary) !important;
+}
+
+.card-body * {
+    color: var(--text-primary) !important;
+}
+
+.card-body .table tbody td,
+.card-body .table tbody th,
+.card-body p,
+.card-body a,
+.card-body strong {
+    color: var(--text-primary) !important;
 }
 
 .btn {
