@@ -1,17 +1,18 @@
 /* SIM Project - Corporate Professional Stylesheet */
 :root {
-    /* Corporate Design Tokens */
-    --primary-color: #1e3a8a;        /* Corporate blue */
-    --secondary-color: #475569;
-    --accent-color: #0f766e;         /* Professional teal */
-    --accent-light: #14b8a6;
-    --accent-muted: #f0fdfa;
-    --nav-bg: #ffffff;               /* Clean white navbar */
-    --success-color: #059669;
-    --warning-color: #d97706;
+    /* ICASA Corporate Colors */
+    --primary-color: #3BAA35;        /* ICASA Verde Primario */
+    --secondary-color: #006837;      /* ICASA Verde Oscuro */
+    --accent-color: #3BAA35;
+    --accent-dark: #006837;
+    --accent-muted: #e8f5e7;         /* Verde muy claro */
+    --metallic-gray: #A7A9AC;        /* Gris metálico ICASA */
+    --nav-bg: #ffffff;               /* Navbar blanco */
+    --success-color: #3BAA35;
+    --warning-color: #f59e0b;
     --danger-color: #dc2626;
-    --info-color: #0284c7;
-    --light-bg: #f8fafc;             /* Light gray background */
+    --info-color: #006837;
+    --light-bg: #f8fafc;             /* Fondo gris claro */
     --card-bg: #ffffff;
     --border-color: #e2e8f0;
     --text-primary: #1e293b;
@@ -70,14 +71,20 @@ body {
 }
 
 .logo-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-light) 100%);
-    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+    padding: 4px;
+}
+
+.logo-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .logo-icon svg path {
@@ -178,9 +185,9 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: #1e40af;
+    background-color: var(--secondary-color);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+    box-shadow: 0 4px 12px rgba(59, 170, 53, 0.3);
 }
 
 .btn-success {
@@ -189,9 +196,9 @@ body {
 }
 
 .btn-success:hover {
-    background-color: #047857;
+    background-color: var(--secondary-color);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    box-shadow: 0 4px 12px rgba(59, 170, 53, 0.3);
 }
 
 .btn-warning {
@@ -354,8 +361,8 @@ h5 {
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 170, 53, 0.1);
     outline: none;
 }
 

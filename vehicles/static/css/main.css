@@ -1,11 +1,12 @@
-/* SIM Project - Corporate Professional Stylesheet */
+/* ICASA - Integradores de Carga Aérea - Corporate Stylesheet */
 :root {
-    /* Corporate Design Tokens */
-    --primary-color: #1e3a8a;        /* Corporate blue */
-    --secondary-color: #475569;
-    --accent-color: #0f766e;         /* Professional teal */
-    --accent-light: #14b8a6;
-    --accent-muted: #f0fdfa;
+    /* ICASA Corporate Colors */
+    --primary-color: #3BAA35;        /* ICASA Verde Primario */
+    --secondary-color: #006837;      /* ICASA Verde Oscuro */
+    --accent-color: #3BAA35;
+    --accent-dark: #006837;
+    --accent-muted: #e8f5e7;         /* Verde muy claro */
+    --metallic-gray: #A7A9AC;        /* Gris metálico ICASA */
     --nav-bg: #ffffff;               /* Clean white navbar */
     --success-color: #059669;
     --warning-color: #d97706;

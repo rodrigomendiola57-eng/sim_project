@@ -1,15 +1,14 @@
 <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container">
         <a class="navbar-brand" href="{% url 'dashboard' %}">
+            {% load static %}
             <div class="logo-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 17H5C3.89543 17 3 16.1046 3 15V9C3 7.89543 3.89543 7 5 7H19C20.1046 7 21 7.89543 21 9V15C21 16.1046 20.1046 17 19 17Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M7 11H7.01M17 11H17.01M7 13H7.01M17 13H17.01" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M9 7V5C9 4.44772 9.44772 4 10 4H14C14.5523 4 15 4.44772 15 5V7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M9 17V19C9 19.5523 9.44772 20 10 20H14C14.5523 20 15 19.5523 15 19V17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <img src="{% static 'images/ICASA.jpg' %}" alt="ICASA Logo">
             </div>
-            <span>SIM Project</span>
+            <div style="display:flex; flex-direction:column; line-height:1.2;">
+                <span style="font-weight:700; font-size:1.1rem;">ICASA</span>
+                <span style="font-size:0.65rem; color:#64748b; font-weight:500;">Integradores de Carga Aérea</span>
+            </div>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
