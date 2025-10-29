@@ -47,8 +47,8 @@
 <div class="row mb-4">
     <div class="col-md-12">
         <div class="card border-success">
-            <div class="card-header bg-success text-white">
-                <h5><i class="bi bi-clipboard-check"></i> Checklists de Hoy ({{ today_checklists.count }})</h5>
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #3BAA35, #006837) !important;">
+                <h5 style="color: white !important;"><i class="bi bi-clipboard-check"></i> Checklists de Hoy ({{ today_checklists.count }})</h5>
             </div>
             <div class="card-body">
                 {% if today_checklists %}
@@ -163,8 +163,8 @@
 <div class="row mb-4">
     <div class="col-md-12">
         <div class="card border-danger">
-            <div class="card-header bg-danger text-white">
-                <h5><i class="bi bi-exclamation-triangle"></i> Documentos Vencidos ({{ expired_docs.count }})</h5>
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #dc2626, #b91c1c) !important;">
+                <h5 style="color: white !important;"><i class="bi bi-exclamation-triangle"></i> Documentos Vencidos ({{ expired_docs.count }})</h5>
             </div>
             <div class="card-body">
                 {% if expired_docs %}
