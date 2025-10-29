@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SIM Project</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Tipografía moderna y elegante -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tipografía serif elegante para títulos -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+        <a class="navbar-brand" href="/vehicles/">
+            <div class="logo-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 17H5C3.89543 17 3 16.1046 3 15V9C3 7.89543 3.89543 7 5 7H19C20.1046 7 21 7.89543 21 9V15C21 16.1046 20.1046 17 19 17Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7 11H7.01M17 11H17.01M7 13H7.01M17 13H17.01" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 7V5C9 4.44772 9.44772 4 10 4H14C14.5523 4 15 4.44772 15 5V7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 17V19C9 19.5523 9.44772 20 10 20H14C14.5523 20 15 19.5523 15 19V17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <span>SIM Project</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/vehicles/">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/vehicles/vehicles/">
+                        <i class="bi bi-truck"></i> Vehículos
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="documentsDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-file-earmark-text"></i> Documentos
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/vehicles/documents/"><i class="bi bi-list-ul"></i> Ver Documentos</a></li>
+                        <li><a class="dropdown-item" href="/vehicles/document-types/"><i class="bi bi-tags"></i> Tipos de Documento</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/vehicles/documents/vehicles/"><i class="bi bi-truck"></i> Documentos Vehiculares</a></li>
+                        <li><a class="dropdown-item" href="/vehicles/documents/employees/"><i class="bi bi-people"></i> Documentos Empleados</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/vehicles/maintenance/">
+                        <i class="bi bi-wrench"></i> Mantenimientos
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="maintenanceDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-gear"></i> Configuración
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/vehicles/maintenance-types/"><i class="bi bi-list-check"></i> Servicios</a></li>
+                        <li><a class="dropdown-item" href="/vehicles/workshops/"><i class="bi bi-building"></i> Talleres</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/vehicles/checklists/">
+                        <i class="bi bi-clipboard-check"></i> Checklists
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/vehicles/drivers/">
+                        <i class="bi bi-people-fill"></i> Empleados
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+    <div class="container mt-5 mb-5">
+        
+
+        
+<div class="dashboard-header mb-4">
+    <h1 class="mb-3">Dashboard</h1>
+    <a href="/vehicles/daily-report/pdf/" class="btn btn-danger btn-pdf-report" target="_blank">
+        <i class="bi bi-file-pdf"></i> Descargar Reporte Diario PDF
+    </a>
+</div>
+
+<style>
+    /* Desktop: mantener diseño horizontal */
+    @media (min-width: 769px) {
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dashboard-header h1 {
+            margin-bottom: 0 !important;
+        }
+        .btn-pdf-report {
+            width: auto !important;
+        }
+    }
+    
+    /* Mobile: diseño vertical con mejor espaciado */
+    @media (max-width: 768px) {
+        .dashboard-header {
+            text-align: center;
+        }
+        .dashboard-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem !important;
+        }
+        .btn-pdf-report {
+            width: 100%;
+            padding: 0.875rem;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<!-- Checklists del Día -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5><i class="bi bi-clipboard-check"></i> Checklists de Hoy (0)</h5>
+            </div>
+            <div class="card-body">
+                
+                <div class="alert alert-light mb-0">
+                    <p class="mb-2">No hay checklists registrados hoy.</p>
+                    <a href="/vehicles/checklists/create/" class="btn btn-sm btn-success">Crear Checklist</a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mantenimientos del Mes -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h5><i class="bi bi-wrench"></i> Mantenimientos de October 2025 (2)</h5>
+            </div>
+            <div class="card-body">
+                
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Vehículo</th>
+                                <th>Servicio</th>
+                                <th>Costo</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <tr class="table-secondary">
+                                <td>27 de octubre de 2025</td>
+                                <td><strong>TWD125A</strong></td>
+                                <td>Alineación y Balanceo</td>
+                                <td>$1250,00</td>
+                                <td>
+                                    
+                                        <span class="badge bg-secondary">✓ Realizado</span>
+                                    
+                                </td>
+                                <td>
+                                    <a href="/vehicles/maintenance/update/2/" class="btn btn-sm btn-outline-primary">Ver</a>
+                                </td>
+                            </tr>
+                        
+                            <tr >
+                                <td>28 de octubre de 2025</td>
+                                <td><strong>MST456B</strong></td>
+                                <td>Cambio de Llantas</td>
+                                <td>$1350,00</td>
+                                <td>
+                                    
+                                        <span class="badge bg-warning">Hoy</span>
+                                    
+                                </td>
+                                <td>
+                                    <a href="/vehicles/maintenance/update/6/" class="btn btn-sm btn-outline-primary">Ver</a>
+                                </td>
+                            </tr>
+                        
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-info">
+                                <td colspan="3"><strong>Total del Mes</strong></td>
+                                <td colspan="3"><strong>$2600</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alertas de Documentos -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5><i class="bi bi-exclamation-triangle"></i> Documentos Vencidos (1)</h5>
+            </div>
+            <div class="card-body">
+                
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Vehículo</th>
+                                <th>Tipo</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Días Vencido</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <tr>
+                                <td>TWD125A</td>
+                                <td>Tarjeta de Circulación</td>
+                                <td>26 de octubre de 2025</td>
+                                <td><span class="badge bg-danger">2 días</span></td>
+                                <td><a href="/vehicles/documents/update/2/" class="btn btn-sm btn-warning">Renovar</a></td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning">
+                <h5><i class="bi bi-clock"></i> Documentos por Vencer (próximos 30 días) (1)</h5>
+            </div>
+            <div class="card-body">
+                
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Vehículo</th>
+                                <th>Tipo</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Días Restantes</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <tr>
+                                <td>TWD125A</td>
+                                <td>Póliza de Seguro Amplia</td>
+                                <td>29 de octubre de 2025</td>
+                                <td><span class="badge bg-warning">1 días</span></td>
+                                <td><a href="/vehicles/documents/update/3/" class="btn btn-sm btn-primary">Renovar</a></td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Vehículos</h5>
+                <h2>2</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Activos</h5>
+                <h2>1</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">En Mantenimiento</h5>
+                <h2>1</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Documentos</h5>
+                <h2>2</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Calendario de Vencimientos -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5>Calendario de Vencimientos</h5>
+            </div>
+            <div class="card-body">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+
+<style>
+    /* Optimización del calendario para móviles */
+    @media (max-width: 768px) {
+        #calendar {
+            font-size: 0.75rem;
+        }
+        
+        .fc .fc-toolbar {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .fc .fc-toolbar-chunk {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .fc .fc-button {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+        }
+        
+        .fc .fc-toolbar-title {
+            font-size: 1rem;
+        }
+        
+        .fc-daygrid-day-number {
+            font-size: 0.7rem;
+        }
+        
+        .fc-event {
+            font-size: 0.65rem;
+            padding: 1px 2px;
+        }
+        
+        .fc-col-header-cell {
+            font-size: 0.7rem;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var isMobile = window.innerWidth <= 768;
+    
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: isMobile ? 'dayGridWeek' : 'dayGridMonth',
+        locale: 'es',
+        headerToolbar: {
+            left: 'prev,next',
+            center: 'title',
+            right: isMobile ? 'today' : 'dayGridMonth,dayGridWeek,today'
+        },
+        height: isMobile ? 'auto' : 650,
+        contentHeight: isMobile ? 400 : 600,
+        events: [
+            
+            {
+                title: 'TWD125A - Póliza de Seguro Amplia',
+                start: '2025-10-29',
+                color: '#ffc107',
+                url: '/vehicles/documents/update/3/'
+            },
+            
+            {
+                title: 'TWD125A - Tarjeta de Circulación',
+                start: '2025-10-26',
+                color: '#dc3545',
+                url: '/vehicles/documents/update/2/'
+            },
+            
+        ]
+    });
+    calendar.render();
+});
+</script>
+
+    </div>
+    
+    <footer class="mt-5 py-4" style="background-color: #fafafa; border-top: 1px solid #f3f4f6;">
+    <div class="container text-center">
+        <p class="mb-1" style="font-size: 0.85rem; color: #6b7280; font-weight: 500;">&copy; 2025 SIM Project</p>
+        <p class="mb-0" style="font-size: 0.8rem; color: #9ca3af;">Sistema Integral de Mantenimiento Vehicular</p>
+    </div>
+</footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

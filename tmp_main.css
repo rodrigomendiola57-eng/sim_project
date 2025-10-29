@@ -1,0 +1,442 @@
+/* Copia del main.css en project-level static para que Django lo sirva desde app static */
+/* (Generado automáticamente para asegurar que runserver lo encuentre) */
+/* Main CSS moved from vehicles/templates/vehicles/base.html */
+:root {
+    /* Minimal design tokens */
+    --primary-color: #0f1724;        /* slightly softer than pure black */
+    --secondary-color: #6b7280;
+    /* Corporate palette: dark green + white */
+    --accent-color: #0b5e3a;         /* dark green brand color */
+    --accent-muted: rgba(11,94,58,0.08); /* subtle green background */
+    --nav-bg: var(--accent-color);   /* navbar uses brand green */
+    --panel-bg: #f8fafb;             /* light panel background */
+    --muted-card-bg: #ffffff;        /* card background white */
+    --muted-text: #6b7280;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --light-bg: #07070a;             /* page background (dark) */
+    --card-bg: rgba(255,255,255,0.02);
+    --border-color: rgba(255,255,255,0.04);         /* softer borders on dark */
+    --text-primary: #e6eef6;         /* light text */
+    --text-secondary: #9aa3ad;
+    --shadow-sm: 0 6px 12px rgba(15, 23, 36, 0.06);
+    --shadow-md: 0 12px 24px rgba(15, 23, 36, 0.08);
+    --shadow-lg: 0 24px 48px rgba(15, 23, 36, 0.12);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    background-color: var(--light-bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.navbar {
+    background: var(--nav-bg);
+    padding: calc(var(--spacing-md) - 0.25rem) 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.125rem;
+    letter-spacing: -0.2px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: opacity 0.12s ease;
+    color: #ffffff !important;
+}
+
+.navbar-brand:hover {
+    opacity: 0.7;
+}
+
+.logo-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #111111 0%, #1f2937 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+}
+
+.logo-icon svg path {
+    stroke: white !important;
+}
+
+.nav-link {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0 0.25rem;
+    padding: 0.45rem 0.6rem !important;
+    border-radius: 8px;
+    transition: background-color 0.12s ease, color 0.12s ease, transform 0.12s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: rgba(255,255,255,0.95) !important;
+}
+
+.nav-link:hover {
+    background-color: rgba(255,255,255,0.06);
+    color: #ffffff !important;
+}
+
+.nav-link.active {
+    background: rgba(0,0,0,0.08);
+    color: #ffffff !important;
+}
+
+.dropdown-menu {
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    border-radius: 8px;
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    border-radius: 6px;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f9fafb;
+}
+
+.card {
+    border: 1px solid rgba(2,6,23,0.04);
+    border-radius: var(--radius-md);
+    box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    background: var(--card-bg);
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 50px rgba(2,6,23,0.18);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(2,6,23,0.04);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: calc(var(--spacing-sm) + 0.25rem) calc(var(--spacing-md) + 0.25rem);
+    color: var(--text-primary);
+}
+
+.btn {
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 0.55rem 1rem;
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+.btn-accent {
+    background: linear-gradient(90deg, var(--accent-color), #0a5a36);
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 0.55rem 1rem;
+    box-shadow: 0 6px 18px rgba(11,94,58,0.08);
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.btn-warning {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #d97706;
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+
+.table {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(2,6,23,0.04);
+}
+
+.table thead {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border-bottom: 2px solid rgba(0,0,0,0.06);
+}
+
+.table thead th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table-hover tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #fafafa;
+}
+
+.badge {
+    padding: 0.375rem 0.75rem;
+    font-weight: 500;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+}
+
+.alert {
+    border: 1px solid;
+    border-radius: 10px;
+    border-left: 4px solid;
+    background-color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+h1, h2, h3, h4, h5 {
+    /* Headings use an elegant serif to contrast with the dark theme */
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    margin-bottom: 0;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+
+.form-control, .form-select {
+    border: 1px solid rgba(2,6,23,0.06);
+    background: #ffffff;
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+    font-size: 0.95rem;
+}
+
+.form-control::placeholder {
+    color: #9aa3ad;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+    outline: none;
+}
+
+.container {
+    max-width: 1180px;
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+}
+
+/* Dark hero for dashboard pages */
+
+.hero-dark {
+    background: linear-gradient(90deg, rgba(11,94,58,0.12), rgba(11,94,58,0.06));
+    color: var(--text-primary);
+    padding: calc(var(--spacing-lg) + 0.5rem);
+    border-radius: 12px;
+    margin-bottom: 1.25rem;
+    border-left: 6px solid var(--accent-color);
+}
+
+.hero-dark h1 { margin: 0; font-size: 2rem; letter-spacing: -0.5px; color: var(--text-primary); }
+
+.muted-accent {
+    background-color: rgba(255,255,255,0.02);
+    border-radius: 10px;
+    padding: 0.75rem;
+}
+
+/* Page title / hero */
+.page-title {
+    margin-bottom: 1rem;
+}
+
+.page-title h1 {
+    font-size: 1.75rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.page-title p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.card-body {
+    padding: calc(var(--spacing-md) + 0.25rem);
+}
+
+/* Subtle accent backgrounds */
+.muted-accent {
+    background-color: var(--accent-muted);
+    border-radius: 10px;
+    padding: 0.75rem;
+}
+
+.input-group {
+    box-shadow: var(--shadow-sm);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+    
+    .nav-link {
+        margin: 0.25rem 0;
+        padding: 0.5rem 1rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-group .btn {
+        width: auto;
+    }
+    
+    .table {
+        font-size: 0.875rem;
+    }
+    
+    .table thead {
+        font-size: 0.75rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    /* Hacer tablas scrolleables en móvil */
+    .table-responsive {
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    
+    /* Mejorar dropdowns en móvil */
+    .dropdown-menu {
+        width: 100%;
+    }
+    
+    /* Espaciado mejorado */
+    .mt-5 {
+        margin-top: 2rem !important;
+    }
+    
+    .mb-5 {
+        margin-bottom: 2rem !important;
+    }
+}
+
+/* Tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        max-width: 95%;
+    }
+}

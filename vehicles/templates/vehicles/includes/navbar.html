@@ -1,0 +1,68 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'dashboard' %}">
+            <div class="logo-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 17H5C3.89543 17 3 16.1046 3 15V9C3 7.89543 3.89543 7 5 7H19C20.1046 7 21 7.89543 21 9V15C21 16.1046 20.1046 17 19 17Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7 11H7.01M17 11H17.01M7 13H7.01M17 13H17.01" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 7V5C9 4.44772 9.44772 4 10 4H14C14.5523 4 15 4.44772 15 5V7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 17V19C9 19.5523 9.44772 20 10 20H14C14.5523 20 15 19.5523 15 19V17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <span>SIM Project</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'vehicle_list' %}">
+                        <i class="bi bi-truck"></i> Vehículos
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="documentsDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-file-earmark-text"></i> Documentos
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'document_list' %}"><i class="bi bi-list-ul"></i> Ver Documentos</a></li>
+                        <li><a class="dropdown-item" href="{% url 'documenttype_list' %}"><i class="bi bi-tags"></i> Tipos de Documento</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'vehicle_documents' %}"><i class="bi bi-truck"></i> Documentos Vehiculares</a></li>
+                        <li><a class="dropdown-item" href="{% url 'employee_documents' %}"><i class="bi bi-people"></i> Documentos Empleados</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'maintenance_list' %}">
+                        <i class="bi bi-wrench"></i> Mantenimientos
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="maintenanceDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-gear"></i> Configuración
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'maintenancetype_list' %}"><i class="bi bi-list-check"></i> Servicios</a></li>
+                        <li><a class="dropdown-item" href="{% url 'workshop_list' %}"><i class="bi bi-building"></i> Talleres</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'checklist_list' %}">
+                        <i class="bi bi-clipboard-check"></i> Checklists
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'driver_list' %}">
+                        <i class="bi bi-people-fill"></i> Empleados
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
