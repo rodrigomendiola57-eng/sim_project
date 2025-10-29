@@ -49,19 +49,19 @@ body {
 }
 
 .navbar {
-    background: var(--nav-bg);
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
+    background: linear-gradient(to right, #ffffff 0%, #f0fdf4 100%);
+    padding: 1.25rem 0;
+    border-bottom: 3px solid var(--primary-color);
+    box-shadow: var(--shadow-md);
 }
 
 .navbar-brand {
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     letter-spacing: -0.3px;
     display: flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: 1rem;
     transition: opacity 0.2s ease;
     color: var(--primary-color) !important;
 }
@@ -71,14 +71,15 @@ body {
 }
 
 .logo-icon {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     background: white;
-    border-radius: 8px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(59, 170, 53, 0.15);
 }
 
 .logo-icon img {
@@ -154,8 +155,9 @@ body {
 }
 
 .card-header {
-    background: linear-gradient(to bottom, #fafafa, #ffffff);
-    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+    border-bottom: 2px solid var(--accent-muted);
+    border-left: 4px solid var(--primary-color);
     font-weight: 600;
     font-size: 0.95rem;
     padding: 1rem 1.25rem;
@@ -229,8 +231,9 @@ body {
 }
 
 .btn-info:hover {
-    background-color: #0369a1;
+    background-color: #005a2e;
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 104, 55, 0.3);
 }
 
 .btn-sm {
@@ -268,9 +271,9 @@ body {
 }
 
 .table thead {
-    background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
-    color: var(--text-primary);
-    border-bottom: 2px solid var(--border-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #ffffff;
+    border-bottom: 2px solid var(--secondary-color);
 }
 
 .table thead th {
@@ -279,7 +282,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     padding: 0.875rem 1rem;
-    color: var(--text-secondary);
+    color: #ffffff;
 }
 
 .table tbody td {
@@ -303,13 +306,21 @@ body {
 
 .badge {
     padding: 0.375rem 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.75rem;
     border-radius: 9999px;
     letter-spacing: 0.3px;
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
+}
+
+.badge.bg-success {
+    background-color: var(--primary-color) !important;
+}
+
+.badge.bg-info {
+    background-color: var(--secondary-color) !important;
 }
 
 .alert {
@@ -321,10 +332,22 @@ body {
     padding: 1rem 1.25rem;
 }
 
+.alert-success {
+    background-color: #f0fdf4;
+    border-left-color: var(--primary-color);
+    border-color: var(--accent-muted);
+}
+
+.alert-info {
+    background-color: #ecfdf5;
+    border-left-color: var(--secondary-color);
+    border-color: #d1fae5;
+}
+
 h1, h2, h3, h4, h5 {
     font-family: 'Inter', sans-serif;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--secondary-color);
     letter-spacing: -0.5px;
     margin-bottom: 0;
 }
@@ -387,6 +410,11 @@ h5 {
     border-bottom-left-radius: 0;
 }
 
+/* Barra de búsqueda con acento verde */
+.input-group:focus-within {
+    box-shadow: 0 0 0 3px rgba(59, 170, 53, 0.15);
+}
+
 /* Dashboard Stats Cards */
 .stat-card {
     background: linear-gradient(135deg, var(--card-bg), #fafafa);
@@ -397,6 +425,27 @@ h5 {
 .stat-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+/* Cards con colores ICASA */
+.card.border-success {
+    border-color: var(--primary-color) !important;
+    border-width: 2px;
+}
+
+.card.border-info {
+    border-color: var(--secondary-color) !important;
+    border-width: 2px;
+}
+
+.card-header.bg-success {
+    background: linear-gradient(135deg, var(--primary-color), #2d9a2a) !important;
+    color: white !important;
+}
+
+.card-header.bg-info {
+    background: linear-gradient(135deg, var(--secondary-color), #005a2e) !important;
+    color: white !important;
 }
 
 /* Table Responsive Wrapper */
