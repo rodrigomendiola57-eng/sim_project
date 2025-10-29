@@ -102,9 +102,9 @@
 <!-- Mantenimientos del Mes -->
 <div class="row mb-4">
     <div class="col-md-12">
-        <div class="card border-info">
-            <div class="card-header bg-info text-white">
-                <h5><i class="bi bi-wrench"></i> Mantenimientos de {{ current_month }} ({{ month_maintenances.count }})</h5>
+        <div class="card border-success">
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #3BAA35, #006837) !important;">
+                <h5 style="color: white !important;"><i class="bi bi-wrench"></i> Mantenimientos de {{ current_month }} ({{ month_maintenances.count }})</h5>
             </div>
             <div class="card-body">
                 {% if month_maintenances %}
@@ -203,8 +203,8 @@
 <div class="row mb-4">
     <div class="col-md-12">
         <div class="card border-warning">
-            <div class="card-header bg-warning">
-                <h5><i class="bi bi-clock"></i> Documentos por Vencer (próximos 30 días) ({{ expiring_soon_docs.count }})</h5>
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #f59e0b, #d97706) !important;">
+                <h5 style="color: white !important;"><i class="bi bi-clock"></i> Documentos por Vencer (próximos 30 días) ({{ expiring_soon_docs.count }})</h5>
             </div>
             <div class="card-body">
                 {% if expiring_soon_docs %}
@@ -280,8 +280,8 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5>Calendario de Vencimientos</h5>
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #3BAA35, #006837) !important;">
+                <h5 style="color: white !important;">Calendario de Vencimientos</h5>
             </div>
             <div class="card-body">
                 <div id="calendar"></div>
