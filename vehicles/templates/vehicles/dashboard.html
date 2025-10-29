@@ -166,9 +166,9 @@
             <div class="card-header text-white" style="background: linear-gradient(135deg, #dc2626, #b91c1c) !important; border-left: 4px solid #dc2626 !important;">
                 <h5 style="color: white !important;"><i class="bi bi-exclamation-triangle"></i> Documentos Vencidos ({{ expired_docs.count }})</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="color: #1e293b !important;">
                 {% if expired_docs %}
-                <div class="table-responsive">
+                <div class="table-responsive" style="color: #1e293b !important;">
                     <table class="table table-sm">
                         <thead>
                             <tr>
@@ -193,7 +193,7 @@
                     </table>
                 </div>
                 {% else %}
-                <p class="text-muted">No hay documentos vencidos</p>
+                <p style="color: #6b7280 !important;">No hay documentos vencidos</p>
                 {% endif %}
             </div>
         </div>
@@ -206,9 +206,9 @@
             <div class="card-header text-white" style="background: linear-gradient(135deg, #f59e0b, #d97706) !important; border-left: 4px solid #f59e0b !important;">
                 <h5 style="color: white !important;"><i class="bi bi-clock"></i> Documentos por Vencer (próximos 30 días) ({{ expiring_soon_docs.count }})</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="color: #1e293b !important;">
                 {% if expiring_soon_docs %}
-                <div class="table-responsive">
+                <div class="table-responsive" style="color: #1e293b !important;">
                     <table class="table table-sm">
                         <thead>
                             <tr>
@@ -233,7 +233,7 @@
                     </table>
                 </div>
                 {% else %}
-                <p class="text-muted">No hay documentos próximos a vencer</p>
+                <p style="color: #6b7280 !important;">No hay documentos próximos a vencer</p>
                 {% endif %}
             </div>
         </div>
