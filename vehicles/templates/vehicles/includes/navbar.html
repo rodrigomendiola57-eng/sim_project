@@ -5,21 +5,16 @@
             <div class="logo-icon">
                 <img src="{% static 'images/ICASA.jpg' %}" alt="ICASA Logo">
             </div>
-            <div style="display:flex; flex-direction:column; line-height:1.2; gap:0.25rem;">
-                <span style="font-weight:800; font-size:1.75rem; color:#006837; letter-spacing:-0.5px;">SIM</span>
-                <span style="font-size:0.75rem; color:#64748b; font-weight:500; text-transform:uppercase; letter-spacing:1px;">Sistema Integral de Mantenimiento</span>
-                <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.25rem;">
-                    <span style="font-weight:700; font-size:1rem; color:#3BAA35;">ICASA</span>
-                    <span style="font-size:0.7rem; color:#A7A9AC;">|</span>
-                    <span style="font-size:0.7rem; color:#64748b; font-weight:500;">Integradores de Carga Aérea</span>
-                </div>
+            <div style="display:flex; flex-direction:column; line-height:1.2; gap:0.2rem;">
+                <span style="font-weight:800; font-size:1.5rem; color:#006837; letter-spacing:-0.5px;">SIM</span>
+                <span style="font-size:0.65rem; color:#64748b; font-weight:500; text-transform:uppercase; letter-spacing:0.5px;">Sistema Integral de Mantenimiento</span>
             </div>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'dashboard' %}">
                         <i class="bi bi-speedometer2"></i> Dashboard
@@ -30,6 +25,7 @@
                         <i class="bi bi-truck"></i> Vehículos
                     </a>
                 </li>
+                {% if perms.vehicles.view_document %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="documentsDropdown" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-file-earmark-text"></i> Documentos
@@ -42,11 +38,15 @@
                         <li><a class="dropdown-item" href="{% url 'employee_documents' %}"><i class="bi bi-people"></i> Documentos Empleados</a></li>
                     </ul>
                 </li>
+                {% endif %}
+                {% if perms.vehicles.view_maintenance %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'maintenance_list' %}">
                         <i class="bi bi-wrench"></i> Mantenimientos
                     </a>
                 </li>
+                {% endif %}
+                {% if perms.vehicles.view_maintenancetype %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="maintenanceDropdown" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-gear"></i> Configuración
@@ -56,21 +56,30 @@
                         <li><a class="dropdown-item" href="{% url 'workshop_list' %}"><i class="bi bi-building"></i> Talleres</a></li>
                     </ul>
                 </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'checklist_list' %}">
                         <i class="bi bi-clipboard-check"></i> Checklists
                     </a>
                 </li>
+                {% if perms.vehicles.view_driver %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'driver_list' %}">
                         <i class="bi bi-people-fill"></i> Empleados
                     </a>
                 </li>
+                {% endif %}
                 {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}" style="color: #dc2626 !important;">
-                        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> {{ user.username }}
                     </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><span class="dropdown-item-text"><strong>{{ user.get_full_name|default:user.username }}</strong></span></li>
+                        <li><span class="dropdown-item-text text-muted" style="font-size: 0.85rem;">{{ user.email|default:"Sin email" }}</span></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}" style="color: #dc2626 !important;"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                    </ul>
                 </li>
                 {% endif %}
             </ul>

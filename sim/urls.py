@@ -18,10 +18,18 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.defaults import permission_denied
+
+def custom_permission_denied(request, exception=None):
+    from django.shortcuts import render
+    return render(request, '403.html', status=403)
+
+handler403 = custom_permission_denied
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('api/', include('api.urls')),
     path('', include('vehicles.urls')),
 ]
 

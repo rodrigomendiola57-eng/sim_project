@@ -1,0 +1,46 @@
+INSTRUCCIONES PARA APLICAR LOS CAMBIOS EN PYTHONANYWHERE:
+
+1. Ve a https://www.pythonanywhere.com
+2. Haz login con tu cuenta
+3. Click en "Consoles" en el menu superior
+4. Click en "Bash" para abrir una consola nueva
+5. Copia y pega estos comandos UNO POR UNO:
+
+COMANDO 1 - Editar views_vehicle_documents.py:
+cat > /home/rodrim_dev/sim_project/vehicles/views_vehicle_documents.py << 'EOF'
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from .models import Vehicle
+
+class VehicleDocumentsView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = Vehicle
+    template_name = 'vehicles/vehicle_documents.html'
+    context_object_name = 'vehicles'
+    permission_required = 'vehicles.view_document'
+    
+    def get_queryset(self):
+        return Vehicle.objects.prefetch_related('documents__doc_type').all()
+EOF
+
+COMANDO 2 - Editar views_employee_documents.py:
+cat > /home/rodrim_dev/sim_project/vehicles/views_employee_documents.py << 'EOF'
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from .models import Driver
+
+class EmployeeDocumentsView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = Driver
+    template_name = 'vehicles/employee_documents.html'
+    context_object_name = 'drivers'
+    permission_required = 'vehicles.view_driverdocument'
+    
+    def get_queryset(self):
+        return Driver.objects.prefetch_related('documents').all()
+EOF
+
+COMANDO 3 - Reiniciar aplicacion:
+touch /var/www/rodrim_dev_pythonanywhere_com_wsgi.py
+
+6. Despues de ejecutar los 3 comandos, cierra la consola
+7. Haz LOGOUT y LOGIN con el usuario rodrim_dev
+8. Los choferes ya NO podran ver Documentos Vehiculares ni Documentos Empleados

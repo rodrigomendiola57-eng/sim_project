@@ -1,0 +1,1047 @@
+================================================================================
+INSTRUCCIONES PARA ACTUALIZAR PYTHONANYWHERE
+================================================================================
+
+1. Ve a https://www.pythonanywhere.com/
+2. Inicia sesión
+3. Ve a 'Files'
+4. Navega a: /home/RodrigoMendiola/sim_project
+
+================================================================================
+ARCHIVOS A ACTUALIZAR:
+================================================================================
+
+
+================================================================================
+ARCHIVO: vehicles/models.py
+================================================================================
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import datetime
+
+class Sim(models.Model):
+    ESTADO_CHOICES = [
+        ('Activo', 'Activo'),
+        ('Inactivo', 'Inactivo'),
+        ('Suspendido', 'Suspendido'),
+    ]
+    
+    OPERADOR_CHOICES = [
+        ('Telcel', 'Telcel'),
+        ('Movistar', 'Movistar'),
+        ('AT&T', 'AT&T'),
+        ('Otro', 'Otro'),
+    ]
+    
+    numero = models.CharField(max_length=20, unique=True, verbose_name='Número')
+    iccid = models.CharField(max_length=30, unique=True, verbose_name='ICCID')
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='Activo', verbose_name='Estado')
+    operador = models.CharField(max_length=50, choices=OPERADOR_CHOICES, verbose_name='Operador')
+    fecha_activacion = models.DateField(null=True, blank=True, verbose_name='Fecha de Activación')
+    fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Registro')
+    
+    class Meta:
+        ordering = ['-fecha_registro']
+        verbose_name = 'SIM'
+        verbose_name_plural = 'SIMs'
+    
+    def __str__(self):
+        return f"{self.numero} - {self.operador}"
+
+class Vehicle(models.Model):
+    STATUS_CHOICES = [
+        ('Active', 'Active'),
+        ('Maintenance', 'Maintenance'),
+        ('Out of service', 'Out of service')
+    ]
+    
+    plate = models.CharField(max_length=10, unique=True, verbose_name='Placa')
+    brand = models.CharField(max_length=50, verbose_name='Marca')
+    model = models.CharField(max_length=50, verbose_name='Modelo')
+    year = models.IntegerField(
+        validators=[MinValueValidator(1900), MaxValueValidator(datetime.now().year + 1)],
+        verbose_name='Año'
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active', verbose_name='Estado')
+    station = models.CharField(max_length=100, blank=True, null=True, verbose_name='Estación')
+    photo = models.ImageField(upload_to='vehicles/', null=True, blank=True, verbose_name='Foto')
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Vehículo'
+        verbose_name_plural = 'Vehículos'
+        indexes = [models.Index(fields=['plate'])]
+
+    def __str__(self):
+        return f"{self.plate} - {self.brand} {self.model}"
+
+class DocumentType(models.Model):
+    name = models.CharField(max_length=100, unique=True, verbose_name='Nombre')
+    description = models.TextField(blank=True, verbose_name='Descripción')
+    validity_months = models.IntegerField(null=True, blank=True, verbose_name='Vigencia (meses)')
+    is_required = models.BooleanField(default=True, verbose_name='Obligatorio')
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Tipo de Documento'
+        verbose_name_plural = 'Tipos de Documento'
+    
+    def __str__(self):
+        return self.name
+
+class Document(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='documents', verbose_name='Vehículo')
+    doc_type = models.ForeignKey(DocumentType, on_delete=models.CASCADE, verbose_name='Tipo de Documento')
+    issue_date = models.DateField(verbose_name='Fecha de Emisión')
+    expiry_date = models.DateField(verbose_name='Fecha de Vencimiento')
+    document_number = models.CharField(max_length=100, blank=True, verbose_name='Número de Documento')
+    document_file = models.ImageField(upload_to='vehicle_documents/', null=True, blank=True, verbose_name='Archivo')
+    notes = models.TextField(blank=True, verbose_name='Notas')
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    class Meta:
+        ordering = ['-expiry_date']
+        verbose_name = 'Documento'
+        verbose_name_plural = 'Documentos'
+        indexes = [models.Index(fields=['expiry_date'])]
+
+    def __str__(self):
+        return f"{self.doc_type.name} - {self.vehicle.plate}"
+
+    @property
+    def is_expired(self):
+        from datetime import date
+        return self.expiry_date < date.today()
+
+class Workshop(models.Model):
+    name = models.CharField(max_length=200, verbose_name='Nombre del Taller')
+    phone = models.CharField(max_length=20, verbose_name='Teléfono')
+    address = models.TextField(verbose_name='Dirección')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Taller'
+        verbose_name_plural = 'Talleres'
+    
+    def __str__(self):
+        return self.name
+
+class MaintenanceType(models.Model):
+    name = models.CharField(max_length=100, unique=True, verbose_name='Nombre')
+    description = models.TextField(blank=True, verbose_name='Descripción')
+    estimated_cost = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True, verbose_name='Costo Estimado')
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Tipo de Mantenimiento'
+        verbose_name_plural = 'Tipos de Mantenimiento'
+    
+    def __str__(self):
+        return self.name
+
+class Maintenance(models.Model):
+    STATUS_CHOICES = [
+        ('Detectado', 'Detectado'),
+        ('Cotizado', 'Cotizado'),
+        ('Aprobado', 'Aprobado'),
+        ('Rechazado', 'Rechazado'),
+        ('Completado', 'Completado'),
+    ]
+    
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='maintenances', verbose_name='Vehículo')
+    maintenance_type = models.ForeignKey(MaintenanceType, on_delete=models.PROTECT, verbose_name='Tipo de Mantenimiento')
+    workshop = models.ForeignKey(Workshop, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Taller')
+    
+    # Fase 1: Detección
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Detectado', verbose_name='Estado')
+    detection_date = models.DateField(auto_now_add=True, verbose_name='Fecha de Detección')
+    detected_by = models.CharField(max_length=200, default='Sistema', verbose_name='Detectado por')
+    problem_description = models.TextField(default='', verbose_name='Descripción del Problema')
+    
+    # Fase 2: Cotización
+    quote_date = models.DateField(null=True, blank=True, verbose_name='Fecha de Cotización')
+    estimated_cost = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Costo Cotizado')
+    quote_file = models.FileField(upload_to='maintenance_quotes/', null=True, blank=True, verbose_name='Archivo de Cotización')
+    
+    # Fase 3: Aprobación
+    approval_date = models.DateField(null=True, blank=True, verbose_name='Fecha de Aprobación')
+    approved_by = models.CharField(max_length=200, blank=True, verbose_name='Aprobado por')
+    approval_notes = models.TextField(blank=True, verbose_name='Notas de Aprobación')
+    
+    # Ejecución
+    date = models.DateField(null=True, blank=True, verbose_name='Fecha de Realización')
+    cost = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Costo Real')
+    invoice_file = models.FileField(upload_to='maintenance_invoices/', null=True, blank=True, verbose_name='Factura')
+    notes = models.TextField(blank=True, verbose_name='Notas')
+    
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Mantenimiento'
+        verbose_name_plural = 'Mantenimientos'
+        indexes = [models.Index(fields=['status']), models.Index(fields=['detection_date'])]
+
+    def __str__(self):
+        return f"{self.maintenance_type.name} - {self.vehicle.plate} [{self.status}]"
+
+class VehicleChecklist(models.Model):
+    STATUS_CHOICES = [('Bueno', 'Bueno'), ('Regular', 'Regular'), ('Malo', 'Malo')]
+    
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='checklists')
+    driver_name = models.CharField(max_length=100)
+    inspection_date = models.DateTimeField(auto_now_add=True)
+    tires_condition = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    tires_pressure = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    lights = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    mirrors = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    windshield = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    wipers = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    body_damage = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    seat_belts = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    horn = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    dashboard_lights = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    air_conditioning = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    brakes = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    engine = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    oil_level = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    coolant_level = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    battery = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    fire_extinguisher = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    first_aid_kit = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    warning_triangles = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    observations = models.TextField(blank=True)
+    odometer_reading = models.IntegerField()
+    fuel_level = models.CharField(max_length=20, choices=[('Lleno', 'Lleno'), ('3/4', '3/4'), ('1/2', '1/2'), ('1/4', '1/4'), ('Vacío', 'Vacío')])
+    
+    class Meta:
+        ordering = ['-inspection_date']
+    
+    def __str__(self):
+        return f"{self.vehicle.plate} - {self.driver_name}"
+    
+    @property
+    def overall_status(self):
+        statuses = [self.tires_condition, self.tires_pressure, self.lights, self.mirrors, self.windshield, self.wipers, self.body_damage, self.seat_belts, self.horn, self.dashboard_lights, self.air_conditioning, self.brakes, self.engine, self.oil_level, self.coolant_level, self.battery, self.fire_extinguisher, self.first_aid_kit, self.warning_triangles]
+        if 'Malo' in statuses:
+            return 'Malo'
+        elif 'Regular' in statuses:
+            return 'Regular'
+        return 'Bueno'
+
+class Driver(models.Model):
+    STATUS_CHOICES = [
+        ('Activo', 'Activo'),
+        ('Inactivo', 'Inactivo'),
+        ('Vacaciones', 'Vacaciones'),
+    ]
+    
+    full_name = models.CharField(max_length=200, verbose_name='Nombre Completo')
+    position = models.CharField(max_length=100, default='Chofer', verbose_name='Puesto')
+    phone = models.CharField(max_length=20, verbose_name='Teléfono')
+    email = models.EmailField(blank=True, verbose_name='Correo Electrónico')
+    address = models.TextField(blank=True, verbose_name='Dirección')
+    license_number = models.CharField(max_length=50, verbose_name='Número de Licencia')
+    license_expiry = models.DateField(verbose_name='Vencimiento de Licencia')
+    hire_date = models.DateField(verbose_name='Fecha de Contratación')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Activo', verbose_name='Estado')
+    notes = models.TextField(blank=True, verbose_name='Notas')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['full_name']
+        verbose_name = 'Empleado'
+        verbose_name_plural = 'Lista de Empleados'
+    
+    def __str__(self):
+        return self.full_name
+
+class DriverDocument(models.Model):
+    DOCUMENT_TYPES = [
+        ('INE', 'INE / Identificación Oficial'),
+        ('Licencia', 'Licencia de Conducir'),
+        ('Antecedentes', 'Carta de No Antecedentes Penales'),
+        ('Solicitud', 'Solicitud de Empleo'),
+        ('Comprobante', 'Comprobante de Domicilio'),
+        ('CURP', 'CURP'),
+        ('RFC', 'RFC'),
+        ('NSS', 'Número de Seguro Social'),
+        ('Contrato', 'Contrato Laboral'),
+        ('Otro', 'Otro Documento'),
+    ]
+    
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='documents', verbose_name='Empleado')
+    document_type = models.CharField(max_length=50, choices=DOCUMENT_TYPES, verbose_name='Tipo de Documento')
+    document_file = models.ImageField(upload_to='driver_documents/', verbose_name='Archivo')
+    description = models.CharField(max_length=200, blank=True, verbose_name='Descripción')
+    upload_date = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Carga')
+    
+    class Meta:
+        ordering = ['-upload_date']
+        verbose_name = 'Documento de Empleado'
+        verbose_name_plural = 'Documentos de Empleados'
+    
+    def __str__(self):
+        return f"{self.driver.full_name} - {self.document_type}"
+
+
+================================================================================
+ARCHIVO: vehicles/views.py
+================================================================================
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.db.models import Q
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import redirect
+from .models import Vehicle, Document, Maintenance, MaintenanceType, Workshop
+from .forms import VehicleForm, DocumentForm, MaintenanceForm
+
+# ----------------- VEHICLES -----------------
+class VehicleListView(LoginRequiredMixin, ListView):
+    model = Vehicle
+    template_name = 'vehicles/vehicle_list.html'
+    context_object_name = 'vehicles'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = Vehicle.objects.all()
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(plate__icontains=search) |
+                Q(brand__icontains=search) |
+                Q(model__icontains=search) |
+                Q(year__icontains=search)
+            )
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search'] = self.request.GET.get('search', '')
+        return context
+
+class VehicleCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'vehicles.add_vehicle'
+    raise_exception = False
+    permission_denied_message = 'No tienes permisos para crear vehículos'
+    model = Vehicle
+    
+    def handle_no_permission(self):
+        messages.error(self.request, 'No tienes permisos para crear vehículos')
+        return redirect('vehicle_list')
+    form_class = VehicleForm
+    template_name = 'vehicles/vehicle_form.html'
+    success_url = reverse_lazy('vehicle_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Vehículo creado exitosamente')
+        return super().form_valid(form)
+
+class VehicleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'vehicles.change_vehicle'
+    model = Vehicle
+    form_class = VehicleForm
+    template_name = 'vehicles/vehicle_form.html'
+    success_url = reverse_lazy('vehicle_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Vehículo actualizado exitosamente')
+        return super().form_valid(form)
+
+class VehicleDetailView(LoginRequiredMixin, DetailView):
+    model = Vehicle
+    template_name = 'vehicles/vehicle_detail.html'
+    context_object_name = 'vehicle'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['documents'] = Document.objects.filter(vehicle=self.object).select_related('doc_type')
+        context['maintenances'] = Maintenance.objects.filter(vehicle=self.object).select_related('maintenance_type', 'workshop').order_by('-created_at')[:10]
+        return context
+
+class VehicleDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'vehicles.delete_vehicle'
+    model = Vehicle
+    template_name = 'vehicles/vehicle_confirm_delete.html'
+    success_url = reverse_lazy('vehicle_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Vehículo eliminado exitosamente')
+        return super().delete(request, *args, **kwargs)
+
+
+# ----------------- DOCUMENTS -----------------
+class DocumentListView(LoginRequiredMixin, ListView):
+    model = Document
+    template_name = 'vehicles/document_list.html'
+    context_object_name = 'documents'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Document.objects.select_related('vehicle').all()
+
+class DocumentCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'vehicles.add_document'
+    model = Document
+    form_class = DocumentForm
+    template_name = 'vehicles/document_form.html'
+    success_url = reverse_lazy('vehicle_documents')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        vehicle_id = self.request.GET.get('vehicle')
+        if vehicle_id:
+            initial['vehicle'] = vehicle_id
+        return initial
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Documento creado exitosamente')
+        return super().form_valid(form)
+
+class DocumentUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'vehicles.change_document'
+    model = Document
+    form_class = DocumentForm
+    template_name = 'vehicles/document_form.html'
+    success_url = reverse_lazy('document_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Documento actualizado exitosamente')
+        return super().form_valid(form)
+
+class DocumentDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'vehicles.delete_document'
+    model = Document
+    template_name = 'vehicles/document_confirm_delete.html'
+    success_url = reverse_lazy('document_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Documento eliminado exitosamente')
+        return super().delete(request, *args, **kwargs)
+
+
+# ----------------- MAINTENANCE -----------------
+class MaintenanceListView(LoginRequiredMixin, ListView):
+    model = Maintenance
+    template_name = 'vehicles/maintenance_list.html'
+    context_object_name = 'maintenances'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = Maintenance.objects.select_related('vehicle', 'maintenance_type', 'workshop').all()
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(vehicle__plate__icontains=search) |
+                Q(vehicle__brand__icontains=search) |
+                Q(vehicle__model__icontains=search) |
+                Q(maintenance_type__name__icontains=search) |
+                Q(workshop__name__icontains=search) |
+                Q(detected_by__icontains=search)
+            )
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search'] = self.request.GET.get('search', '')
+        return context
+
+class MaintenanceCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'vehicles.add_maintenance'
+    model = Maintenance
+    template_name = 'vehicles/maintenance_form.html'
+    fields = ['vehicle', 'maintenance_type', 'detected_by', 'problem_description']
+    success_url = reverse_lazy('maintenance_list')
+
+    def form_valid(self, form):
+        form.instance.status = 'Detectado'
+        messages.success(self.request, 'Problema detectado y registrado exitosamente')
+        return super().form_valid(form)
+
+class MaintenanceUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'vehicles.change_maintenance'
+    model = Maintenance
+    form_class = MaintenanceForm
+    template_name = 'vehicles/maintenance_form.html'
+    success_url = reverse_lazy('maintenance_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Mantenimiento actualizado exitosamente')
+        return super().form_valid(form)
+
+class MaintenanceDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'vehicles.delete_maintenance'
+    model = Maintenance
+    template_name = 'vehicles/maintenance_confirm_delete.html'
+    success_url = reverse_lazy('maintenance_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Mantenimiento eliminado exitosamente')
+        return super().delete(request, *args, **kwargs)
+
+
+# ----------------- MAINTENANCE TYPES -----------------
+class MaintenanceTypeListView(LoginRequiredMixin, ListView):
+    model = MaintenanceType
+    template_name = 'vehicles/maintenancetype_list.html'
+    context_object_name = 'maintenance_types'
+    paginate_by = 10
+
+class MaintenanceTypeCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'vehicles.add_maintenancetype'
+    model = MaintenanceType
+    template_name = 'vehicles/maintenancetype_form.html'
+    fields = ['name', 'description', 'estimated_cost']
+    success_url = reverse_lazy('maintenancetype_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Tipo de servicio creado exitosamente')
+        return super().form_valid(form)
+
+class MaintenanceTypeUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'vehicles.change_maintenancetype'
+    model = MaintenanceType
+    template_name = 'vehicles/maintenancetype_form.html'
+    fields = ['name', 'description', 'estimated_cost']
+    success_url = reverse_lazy('maintenancetype_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Tipo de servicio actualizado exitosamente')
+        return super().form_valid(form)
+
+class MaintenanceTypeDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'vehicles.delete_maintenancetype'
+    model = MaintenanceType
+    template_name = 'vehicles/maintenancetype_confirm_delete.html'
+    success_url = reverse_lazy('maintenancetype_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Tipo de servicio eliminado exitosamente')
+        return super().delete(request, *args, **kwargs)
+
+
+# ----------------- BULK MAINTENANCE -----------------
+from django.views.generic import TemplateView
+from django.shortcuts import redirect
+
+class MaintenanceBulkCreateView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    permission_required = 'vehicles.add_maintenance'
+    template_name = 'vehicles/maintenance_bulk_create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['vehicles'] = Vehicle.objects.all()
+        context['maintenance_types'] = MaintenanceType.objects.all()
+        context['workshops'] = Workshop.objects.all()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        vehicle_id = request.POST.get('vehicle')
+        services = request.POST.getlist('services')
+        
+        if not vehicle_id or not services:
+            messages.error(request, 'Debes seleccionar al menos un servicio')
+            return redirect('maintenance_bulk_add')
+        
+        vehicle = Vehicle.objects.get(id=vehicle_id)
+        count = 0
+        
+        for service_id in services:
+            maintenance_type = MaintenanceType.objects.get(id=service_id)
+            detected_by = request.POST.get(f'detected_by_{service_id}', 'Sistema')
+            problem_description = request.POST.get(f'problem_{service_id}', '')
+            
+            Maintenance.objects.create(
+                vehicle=vehicle,
+                maintenance_type=maintenance_type,
+                status='Detectado',
+                detected_by=detected_by,
+                problem_description=problem_description
+            )
+            count += 1
+        
+        messages.success(request, f'{count} problema(s) detectado(s) exitosamente')
+        return redirect('maintenance_list')
+
+
+================================================================================
+ARCHIVO: vehicles/urls.py
+================================================================================
+from django.urls import path
+from .views import (
+    VehicleListView, VehicleCreateView, VehicleUpdateView, VehicleDeleteView, VehicleDetailView,
+    DocumentListView, DocumentCreateView, DocumentUpdateView, DocumentDeleteView,
+    MaintenanceListView, MaintenanceCreateView, MaintenanceUpdateView, MaintenanceDeleteView,
+    MaintenanceTypeListView, MaintenanceTypeCreateView, MaintenanceTypeUpdateView, MaintenanceTypeDeleteView,
+    MaintenanceBulkCreateView
+)
+from .views_dashboard import DashboardView
+from .views_checklist import ChecklistListView, ChecklistCreateView, ChecklistDetailView, ChecklistDeleteView
+from .views_pdf import MaintenancePDFView
+from .views_documenttype import DocumentTypeListView, DocumentTypeCreateView, DocumentTypeUpdateView, DocumentTypeDeleteView
+from .views_driver import DriverListView, DriverCreateView, DriverUpdateView, DriverDetailView, DriverDeleteView, DriverDocumentUploadView, DriverDocumentDeleteView
+from .views_employee_documents import EmployeeDocumentsView
+from .views_daily_report import DailyReportPDFView
+from .views_workshop import WorkshopListView, WorkshopCreateView, WorkshopUpdateView, WorkshopDeleteView
+from .views_maintenance_phases import MaintenanceDetailView, MaintenanceQuoteView, MaintenanceApproveView, MaintenanceRejectView, MaintenanceCompleteView
+from .views_vehicle_documents import VehicleDocumentsView
+from .views_register import RegisterView
+
+urlpatterns = [
+    # ----------------- AUTH -----------------
+    path('register/', RegisterView.as_view(), name='register'),
+    # ----------------- DASHBOARD -----------------
+    path('', DashboardView.as_view(), name='dashboard'),
+    path('daily-report/pdf/', DailyReportPDFView.as_view(), name='daily_report_pdf'),
+    
+    # ----------------- VEHICLES -----------------
+    path('vehicles/', VehicleListView.as_view(), name='vehicle_list'),
+    path('vehicles/<int:pk>/', VehicleDetailView.as_view(), name='vehicle_detail'),
+    path('add/', VehicleCreateView.as_view(), name='vehicle_add'),
+    path('update/<int:pk>/', VehicleUpdateView.as_view(), name='vehicle_update'),
+    path('delete/<int:pk>/', VehicleDeleteView.as_view(), name='vehicle_delete'),
+
+    # ----------------- DOCUMENT TYPES -----------------
+    path('document-types/', DocumentTypeListView.as_view(), name='documenttype_list'),
+    path('document-types/add/', DocumentTypeCreateView.as_view(), name='documenttype_add'),
+    path('document-types/update/<int:pk>/', DocumentTypeUpdateView.as_view(), name='documenttype_update'),
+    path('document-types/delete/<int:pk>/', DocumentTypeDeleteView.as_view(), name='documenttype_delete'),
+
+    # ----------------- DOCUMENTS -----------------
+    path('documents/', DocumentListView.as_view(), name='document_list'),
+    path('documents/add/', DocumentCreateView.as_view(), name='document_add'),
+    path('documents/update/<int:pk>/', DocumentUpdateView.as_view(), name='document_update'),
+    path('documents/delete/<int:pk>/', DocumentDeleteView.as_view(), name='document_delete'),
+    path('documents/vehicles/', VehicleDocumentsView.as_view(), name='vehicle_documents'),
+    path('documents/employees/', EmployeeDocumentsView.as_view(), name='employee_documents'),
+
+    # ----------------- MAINTENANCE TYPES -----------------
+    path('maintenance-types/', MaintenanceTypeListView.as_view(), name='maintenancetype_list'),
+    path('maintenance-types/add/', MaintenanceTypeCreateView.as_view(), name='maintenancetype_add'),
+    path('maintenance-types/update/<int:pk>/', MaintenanceTypeUpdateView.as_view(), name='maintenancetype_update'),
+    path('maintenance-types/delete/<int:pk>/', MaintenanceTypeDeleteView.as_view(), name='maintenancetype_delete'),
+
+    # ----------------- WORKSHOPS -----------------
+    path('workshops/', WorkshopListView.as_view(), name='workshop_list'),
+    path('workshops/add/', WorkshopCreateView.as_view(), name='workshop_add'),
+    path('workshops/update/<int:pk>/', WorkshopUpdateView.as_view(), name='workshop_update'),
+    path('workshops/delete/<int:pk>/', WorkshopDeleteView.as_view(), name='workshop_delete'),
+
+    # ----------------- MAINTENANCE -----------------
+    path('maintenance/', MaintenanceListView.as_view(), name='maintenance_list'),
+    path('maintenance/add/', MaintenanceCreateView.as_view(), name='maintenance_add'),
+    path('maintenance/bulk-add/', MaintenanceBulkCreateView.as_view(), name='maintenance_bulk_add'),
+    path('maintenance/<int:pk>/', MaintenanceDetailView.as_view(), name='maintenance_detail'),
+    path('maintenance/<int:pk>/quote/', MaintenanceQuoteView.as_view(), name='maintenance_quote'),
+    path('maintenance/<int:pk>/approve/', MaintenanceApproveView.as_view(), name='maintenance_approve'),
+    path('maintenance/<int:pk>/reject/', MaintenanceRejectView.as_view(), name='maintenance_reject'),
+    path('maintenance/<int:pk>/complete/', MaintenanceCompleteView.as_view(), name='maintenance_complete'),
+    path('maintenance/update/<int:pk>/', MaintenanceUpdateView.as_view(), name='maintenance_update'),
+    path('maintenance/delete/<int:pk>/', MaintenanceDeleteView.as_view(), name='maintenance_delete'),
+    path('maintenance/pdf/', MaintenancePDFView.as_view(), name='maintenance_pdf'),
+
+    # ----------------- CHECKLISTS -----------------
+    path('checklists/', ChecklistListView.as_view(), name='checklist_list'),
+    path('checklists/create/', ChecklistCreateView.as_view(), name='checklist_create'),
+    path('checklists/<int:pk>/', ChecklistDetailView.as_view(), name='checklist_detail'),
+    path('checklists/<int:pk>/delete/', ChecklistDeleteView.as_view(), name='checklist_delete'),
+
+    # ----------------- DRIVERS -----------------
+    path('drivers/', DriverListView.as_view(), name='driver_list'),
+    path('drivers/create/', DriverCreateView.as_view(), name='driver_create'),
+    path('drivers/<int:pk>/', DriverDetailView.as_view(), name='driver_detail'),
+    path('drivers/<int:pk>/update/', DriverUpdateView.as_view(), name='driver_update'),
+    path('drivers/<int:pk>/delete/', DriverDeleteView.as_view(), name='driver_delete'),
+    path('drivers/<int:pk>/upload-document/', DriverDocumentUploadView.as_view(), name='driver_document_upload'),
+    path('driver-documents/<int:pk>/delete/', DriverDocumentDeleteView.as_view(), name='driver_document_delete'),
+]
+
+
+================================================================================
+ARCHIVO: vehicles/forms.py
+================================================================================
+from django import forms
+from .models import Vehicle, Document, Maintenance
+
+class VehicleForm(forms.ModelForm):
+    class Meta:
+        model = Vehicle
+        fields = ['plate', 'brand', 'model', 'year', 'station', 'status', 'photo']
+        widgets = {
+            'plate': forms.TextInput(attrs={'class': 'form-control'}),
+            'brand': forms.TextInput(attrs={'class': 'form-control'}),
+            'model': forms.TextInput(attrs={'class': 'form-control'}),
+            'year': forms.NumberInput(attrs={'class': 'form-control'}),
+            'station': forms.TextInput(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+            'photo': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ['vehicle', 'doc_type', 'issue_date', 'expiry_date', 'document_number', 'document_file', 'notes']
+        widgets = {
+            'vehicle': forms.Select(attrs={'class': 'form-control'}),
+            'doc_type': forms.Select(attrs={'class': 'form-control'}),
+            'issue_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'expiry_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'document_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'document_file': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        issue_date = cleaned_data.get('issue_date')
+        expiry_date = cleaned_data.get('expiry_date')
+        if issue_date and expiry_date and expiry_date <= issue_date:
+            raise forms.ValidationError('La fecha de vencimiento debe ser posterior a la fecha de emisión')
+        return cleaned_data
+
+class MaintenanceForm(forms.ModelForm):
+    class Meta:
+        model = Maintenance
+        fields = ['vehicle', 'maintenance_type', 'date', 'cost', 'notes']
+        widgets = {
+            'vehicle': forms.Select(attrs={'class': 'form-control'}),
+            'maintenance_type': forms.Select(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'cost': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+
+================================================================================
+ARCHIVO: vehicles/templates/vehicles/vehicle_list.html
+================================================================================
+{% extends 'vehicles/base.html' %}
+
+{% block title %}Vehículos - SIM Project{% endblock %}
+
+{% block content %}
+<div class="hero-dark mb-4">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap">
+            <div class="page-title">
+                <h1>Vehículos</h1>
+                <p class="mb-0">Lista completa de vehículos registrados en el sistema.</p>
+            </div>
+            <div class="mt-3 mt-sm-0">
+                {% if perms.vehicles.add_vehicle %}
+                <a href="{% url 'vehicle_add' %}" class="btn btn-accent">+ Agregar Vehículo</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Buscar por placa, marca, modelo o año..." value="{{ search }}">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        {% if search %}
+        <a href="{% url 'vehicle_list' %}" class="btn btn-secondary">Limpiar</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if vehicles %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Foto</th>
+                <th>Placa</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Año</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for vehicle in vehicles %}
+            <tr>
+                <td>
+                    {% if vehicle.photo %}
+                        <img src="{{ vehicle.photo.url }}" alt="{{ vehicle.plate }}" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                    {% else %}
+                        <span class="text-muted">Sin foto</span>
+                    {% endif %}
+                </td>
+                <td>{{ vehicle.plate }}</td>
+                <td>{{ vehicle.brand }}</td>
+                <td>{{ vehicle.model }}</td>
+                <td>{{ vehicle.year }}</td>
+                <td>
+                    {% if vehicle.status == 'Active' %}
+                        <span class="badge bg-success">{{ vehicle.status }}</span>
+                    {% elif vehicle.status == 'Maintenance' %}
+                        <span class="badge bg-warning">{{ vehicle.status }}</span>
+                    {% else %}
+                        <span class="badge bg-danger">{{ vehicle.status }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'vehicle_detail' vehicle.pk %}" class="btn btn-sm btn-info">Ver</a>
+                    {% if perms.vehicles.change_vehicle %}
+                    <a href="{% url 'vehicle_update' vehicle.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                    {% endif %}
+                    {% if perms.vehicles.delete_vehicle %}
+                    <a href="{% url 'vehicle_delete' vehicle.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<nav>
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">Primera</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+        {% endif %}
+        <li class="page-item active"><span class="page-link">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="alert alert-info">
+    No hay vehículos registrados.
+    {% if perms.vehicles.add_vehicle %}
+    <a href="{% url 'vehicle_add' %}">Agregar el primero</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+
+================================================================================
+ARCHIVO: vehicles/templates/vehicles/vehicle_detail.html
+================================================================================
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detalle del Vehículo - {{ vehicle.plate }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="fas fa-car"></i> Detalle del Vehículo</h2>
+                <a href="{% url 'vehicle_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Información del Vehículo -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Información del Vehículo</h5>
+                </div>
+                <div class="card-body">
+                    {% if vehicle.photo %}
+                    <div class="text-center mb-3">
+                        <img src="{{ vehicle.photo.url }}" alt="{{ vehicle.plate }}" class="img-fluid rounded" style="max-height: 200px;">
+                    </div>
+                    {% endif %}
+                    
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="40%">Placa:</th>
+                            <td><strong class="text-success">{{ vehicle.plate }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Marca:</th>
+                            <td>{{ vehicle.brand }}</td>
+                        </tr>
+                        <tr>
+                            <th>Modelo:</th>
+                            <td>{{ vehicle.model }}</td>
+                        </tr>
+                        <tr>
+                            <th>Año:</th>
+                            <td>{{ vehicle.year }}</td>
+                        </tr>
+                        {% if vehicle.station %}
+                        <tr>
+                            <th>Estación:</th>
+                            <td><span class="badge bg-info">{{ vehicle.station }}</span></td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <th>Estado:</th>
+                            <td>
+                                {% if vehicle.status == 'Active' %}
+                                    <span class="badge bg-success">Activo</span>
+                                {% elif vehicle.status == 'Maintenance' %}
+                                    <span class="badge bg-warning">Mantenimiento</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Fuera de servicio</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="mt-3">
+                        <a href="{% url 'vehicle_update' vehicle.pk %}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a href="{% url 'vehicle_delete' vehicle.pk %}" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentos -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-file-alt"></i> Documentos</h5>
+                    <a href="{% url 'document_add' %}?vehicle={{ vehicle.id }}" class="btn btn-sm btn-light">
+                        <i class="fas fa-plus"></i> Agregar
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if documents %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Vencimiento</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in documents %}
+                                <tr>
+                                    <td>{{ doc.doc_type.name }}</td>
+                                    <td>{{ doc.expiry_date|date:"d/m/Y" }}</td>
+                                    <td>
+                                        {% if doc.is_expired %}
+                                            <span class="badge bg-danger">Vencido</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Vigente</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">No hay documentos registrados</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de Mantenimientos -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-wrench"></i> Historial de Mantenimientos</h5>
+                    <a href="{% url 'maintenance_add' %}" class="btn btn-sm btn-dark">
+                        <i class="fas fa-plus"></i> Agregar
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if maintenances %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Estado</th>
+                                    <th>Taller</th>
+                                    <th>Costo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for maint in maintenances %}
+                                <tr>
+                                    <td>{{ maint.detection_date|date:"d/m/Y" }}</td>
+                                    <td>{{ maint.maintenance_type.name }}</td>
+                                    <td>
+                                        {% if maint.status == 'Detectado' %}
+                                            <span class="badge bg-warning">{{ maint.status }}</span>
+                                        {% elif maint.status == 'Cotizado' %}
+                                            <span class="badge bg-info">{{ maint.status }}</span>
+                                        {% elif maint.status == 'Aprobado' %}
+                                            <span class="badge bg-primary">{{ maint.status }}</span>
+                                        {% elif maint.status == 'Completado' %}
+                                            <span class="badge bg-success">{{ maint.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ maint.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ maint.workshop.name|default:"-" }}</td>
+                                    <td>
+                                        {% if maint.cost %}
+                                            ${{ maint.cost }}
+                                        {% elif maint.estimated_cost %}
+                                            ~${{ maint.estimated_cost }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'maintenance_detail' maint.pk %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">No hay mantenimientos registrados</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+================================================================================
+DESPUÉS DE COPIAR LOS ARCHIVOS, EJECUTA EN LA CONSOLA BASH:
+================================================================================
+
+cd /home/RodrigoMendiola/sim_project
+python manage.py makemigrations
+python manage.py migrate
+
+
+Luego ve a la pestaña 'Web' y haz clic en 'Reload'
+================================================================================

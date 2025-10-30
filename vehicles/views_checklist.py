@@ -2,15 +2,17 @@ from django.views.generic import ListView, CreateView, DetailView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import VehicleChecklist, Vehicle
 
-class ChecklistListView(ListView):
+class ChecklistListView(LoginRequiredMixin, ListView):
     model = VehicleChecklist
     template_name = 'vehicles/checklist_list.html'
     context_object_name = 'checklists'
     paginate_by = 20
 
-class ChecklistCreateView(CreateView):
+class ChecklistCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'vehicles.add_vehiclechecklist'
     model = VehicleChecklist
     template_name = 'vehicles/checklist_form.html'
     fields = '__all__'
@@ -51,12 +53,13 @@ class ChecklistCreateView(CreateView):
         messages.success(request, 'Checklist guardado exitosamente')
         return redirect('checklist_list')
 
-class ChecklistDetailView(DetailView):
+class ChecklistDetailView(LoginRequiredMixin, DetailView):
     model = VehicleChecklist
     template_name = 'vehicles/checklist_detail.html'
     context_object_name = 'checklist'
 
-class ChecklistDeleteView(DeleteView):
+class ChecklistDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'vehicles.delete_vehiclechecklist'
     model = VehicleChecklist
     template_name = 'vehicles/checklist_confirm_delete.html'
     success_url = reverse_lazy('checklist_list')

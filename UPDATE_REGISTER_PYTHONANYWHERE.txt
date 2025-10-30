@@ -1,0 +1,64 @@
+============================================================
+ACTUALIZAR PYTHONANYWHERE - AGREGAR REGISTRO
+============================================================
+
+Copia y pega este comando completo en la consola Bash de PythonAnywhere:
+
+cd ~/sim_project && cat > vehicles/views_register.py << 'ENDOFFILE'
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+from django.views import View
+from django.contrib import messages
+
+class RegisterView(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('dashboard')
+        form = UserCreationForm()
+        return render(request, 'registration/register.html', {'form': form})
+    
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f'¡Bienvenido {user.username}! Tu cuenta ha sido creada exitosamente.')
+            return redirect('dashboard')
+        return render(request, 'registration/register.html', {'form': form})
+ENDOFFILE
+
+Luego ejecuta este comando para crear el template de registro:
+
+cat > vehicles/templates/registration/register.html << 'ENDOFFILE'
+[CONTENIDO DEL ARCHIVO register.html - VER ARCHIVO LOCAL]
+ENDOFFILE
+
+Actualiza el archivo urls.py:
+nano vehicles/urls.py
+
+Busca la linea:
+from .views_vehicle_documents import VehicleDocumentsView
+
+Y agrega debajo:
+from .views_register import RegisterView
+
+Luego busca:
+urlpatterns = [
+
+Y agrega como primera ruta:
+    # ----------------- AUTH -----------------
+    path('register/', RegisterView.as_view(), name='register'),
+
+Guarda: Ctrl+O, Enter, Ctrl+X
+
+Actualiza login.html:
+nano vehicles/templates/registration/login.html
+
+Busca la seccion del footer y reemplaza con el link de registro
+(Ver archivo local para referencia)
+
+Reinicia:
+touch /var/www/icasaoperador_pythonanywhere_com_wsgi.py
+
+============================================================

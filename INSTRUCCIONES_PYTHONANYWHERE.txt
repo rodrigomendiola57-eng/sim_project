@@ -1,0 +1,88 @@
+============================================================
+INSTRUCCIONES PARA ACTUALIZAR PYTHONANYWHERE
+============================================================
+
+PASO 1: Abre la consola Bash en PythonAnywhere
+
+PASO 2: Navega a tu proyecto
+   cd ~/sim_project
+
+PASO 3: Edita el archivo navbar.html
+   nano vehicles/templates/vehicles/includes/navbar.html
+
+PASO 4: Busca esta linea:
+   <ul class="navbar-nav ms-auto">
+
+   Y cambiala por:
+   <ul class="navbar-nav ms-auto align-items-center">
+
+   Guarda: Ctrl+O, Enter, Ctrl+X
+
+PASO 5: Edita el archivo CSS
+   nano static/css/main.css
+
+PASO 6: Busca la seccion .navbar { y reemplaza TODO el bloque con:
+
+.navbar {
+    background: linear-gradient(to right, #ffffff 0%, #f0fdf4 100%);
+    padding: 0.75rem 0;
+    border-bottom: 3px solid var(--primary-color);
+    box-shadow: var(--shadow-md);
+}
+
+.navbar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar-collapse {
+    flex-grow: 0;
+}
+
+.navbar-nav {
+    gap: 0.25rem;
+}
+
+PASO 7: Busca .logo-icon { y cambia estos valores:
+   width: 80px;  -->  width: 60px;
+   height: 80px;  -->  height: 60px;
+   border-radius: 12px;  -->  border-radius: 10px;
+   padding: 8px;  -->  padding: 6px;
+
+PASO 8: Busca .nav-link { y reemplaza TODO el bloque con:
+
+.nav-link {
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--text-secondary) !important;
+    white-space: nowrap;
+}
+
+PASO 9: Busca .dropdown-menu { y despues de ese bloque agrega:
+
+.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+
+PASO 10: Guarda el archivo
+   Ctrl+O, Enter, Ctrl+X
+
+PASO 11: Ejecuta collectstatic
+   python manage.py collectstatic --noinput
+
+PASO 12: Reinicia la aplicacion
+   touch /var/www/icasaoperador_pythonanywhere_com_wsgi.py
+
+PASO 13: Recarga tu sitio web en el navegador
+
+============================================================
+LISTO! El navbar deberia verse perfectamente alineado
+============================================================
