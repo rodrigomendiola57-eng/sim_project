@@ -40,18 +40,13 @@
                 </li>
                 {% endif %}
                 {% if perms.vehicles.view_maintenance %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'maintenance_list' %}">
-                        <i class="bi bi-wrench"></i> Mantenimientos
-                    </a>
-                </li>
-                {% endif %}
-                {% if perms.vehicles.view_maintenancetype %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="maintenanceDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-gear"></i> Configuración
+                        <i class="bi bi-wrench"></i> Mantenimientos
                     </a>
                     <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'maintenance_list' %}"><i class="bi bi-list-ul"></i> Ver Mantenimientos</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{% url 'maintenancetype_list' %}"><i class="bi bi-list-check"></i> Servicios</a></li>
                         <li><a class="dropdown-item" href="{% url 'workshop_list' %}"><i class="bi bi-building"></i> Talleres</a></li>
                     </ul>

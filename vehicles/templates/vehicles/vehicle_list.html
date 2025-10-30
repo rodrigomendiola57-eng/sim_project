@@ -39,6 +39,7 @@
                 <th>Marca</th>
                 <th>Modelo</th>
                 <th>Año</th>
+                <th>Estación</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>
@@ -57,6 +58,7 @@
                 <td>{{ vehicle.brand }}</td>
                 <td>{{ vehicle.model }}</td>
                 <td>{{ vehicle.year }}</td>
+                <td>{{ vehicle.station|default:"-" }}</td>
                 <td>
                     {% if vehicle.status == 'Active' %}
                         <span class="badge bg-success">{{ vehicle.status }}</span>

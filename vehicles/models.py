@@ -38,6 +38,41 @@ class Vehicle(models.Model):
         ('Out of service', 'Out of service')
     ]
     
+    STATION_CHOICES = [
+        ('Aguascalientes', 'Aguascalientes'),
+        ('Baja California', 'Baja California'),
+        ('Baja California Sur', 'Baja California Sur'),
+        ('Campeche', 'Campeche'),
+        ('Chiapas', 'Chiapas'),
+        ('Chihuahua', 'Chihuahua'),
+        ('Ciudad de México', 'Ciudad de México'),
+        ('Coahuila', 'Coahuila'),
+        ('Colima', 'Colima'),
+        ('Durango', 'Durango'),
+        ('Estado de México', 'Estado de México'),
+        ('Guanajuato', 'Guanajuato'),
+        ('Guerrero', 'Guerrero'),
+        ('Hidalgo', 'Hidalgo'),
+        ('Jalisco', 'Jalisco'),
+        ('Michoacán', 'Michoacán'),
+        ('Morelos', 'Morelos'),
+        ('Nayarit', 'Nayarit'),
+        ('Nuevo León', 'Nuevo León'),
+        ('Oaxaca', 'Oaxaca'),
+        ('Puebla', 'Puebla'),
+        ('Querétaro', 'Querétaro'),
+        ('Quintana Roo', 'Quintana Roo'),
+        ('San Luis Potosí', 'San Luis Potosí'),
+        ('Sinaloa', 'Sinaloa'),
+        ('Sonora', 'Sonora'),
+        ('Tabasco', 'Tabasco'),
+        ('Tamaulipas', 'Tamaulipas'),
+        ('Tlaxcala', 'Tlaxcala'),
+        ('Veracruz', 'Veracruz'),
+        ('Yucatán', 'Yucatán'),
+        ('Zacatecas', 'Zacatecas'),
+    ]
+    
     plate = models.CharField(max_length=10, unique=True, verbose_name='Placa')
     brand = models.CharField(max_length=50, verbose_name='Marca')
     model = models.CharField(max_length=50, verbose_name='Modelo')
@@ -46,7 +81,7 @@ class Vehicle(models.Model):
         verbose_name='Año'
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active', verbose_name='Estado')
-    station = models.CharField(max_length=100, blank=True, null=True, verbose_name='Estación')
+    station = models.CharField(max_length=100, choices=STATION_CHOICES, blank=True, null=True, verbose_name='Estación')
     photo = models.ImageField(upload_to='vehicles/', null=True, blank=True, verbose_name='Foto')
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -176,8 +211,44 @@ class Maintenance(models.Model):
 class VehicleChecklist(models.Model):
     STATUS_CHOICES = [('Bueno', 'Bueno'), ('Regular', 'Regular'), ('Malo', 'Malo')]
     
+    STATION_CHOICES = [
+        ('Aguascalientes', 'Aguascalientes'),
+        ('Baja California', 'Baja California'),
+        ('Baja California Sur', 'Baja California Sur'),
+        ('Campeche', 'Campeche'),
+        ('Chiapas', 'Chiapas'),
+        ('Chihuahua', 'Chihuahua'),
+        ('Ciudad de México', 'Ciudad de México'),
+        ('Coahuila', 'Coahuila'),
+        ('Colima', 'Colima'),
+        ('Durango', 'Durango'),
+        ('Estado de México', 'Estado de México'),
+        ('Guanajuato', 'Guanajuato'),
+        ('Guerrero', 'Guerrero'),
+        ('Hidalgo', 'Hidalgo'),
+        ('Jalisco', 'Jalisco'),
+        ('Michoacán', 'Michoacán'),
+        ('Morelos', 'Morelos'),
+        ('Nayarit', 'Nayarit'),
+        ('Nuevo León', 'Nuevo León'),
+        ('Oaxaca', 'Oaxaca'),
+        ('Puebla', 'Puebla'),
+        ('Querétaro', 'Querétaro'),
+        ('Quintana Roo', 'Quintana Roo'),
+        ('San Luis Potosí', 'San Luis Potosí'),
+        ('Sinaloa', 'Sinaloa'),
+        ('Sonora', 'Sonora'),
+        ('Tabasco', 'Tabasco'),
+        ('Tamaulipas', 'Tamaulipas'),
+        ('Tlaxcala', 'Tlaxcala'),
+        ('Veracruz', 'Veracruz'),
+        ('Yucatán', 'Yucatán'),
+        ('Zacatecas', 'Zacatecas'),
+    ]
+    
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='checklists')
     driver_name = models.CharField(max_length=100)
+    station = models.CharField(max_length=100, choices=STATION_CHOICES, blank=True, null=True, verbose_name='Estación')
     inspection_date = models.DateTimeField(auto_now_add=True)
     tires_condition = models.CharField(max_length=10, choices=STATUS_CHOICES)
     tires_pressure = models.CharField(max_length=10, choices=STATUS_CHOICES)
@@ -224,8 +295,44 @@ class Driver(models.Model):
         ('Vacaciones', 'Vacaciones'),
     ]
     
+    STATION_CHOICES = [
+        ('Aguascalientes', 'Aguascalientes'),
+        ('Baja California', 'Baja California'),
+        ('Baja California Sur', 'Baja California Sur'),
+        ('Campeche', 'Campeche'),
+        ('Chiapas', 'Chiapas'),
+        ('Chihuahua', 'Chihuahua'),
+        ('Ciudad de México', 'Ciudad de México'),
+        ('Coahuila', 'Coahuila'),
+        ('Colima', 'Colima'),
+        ('Durango', 'Durango'),
+        ('Estado de México', 'Estado de México'),
+        ('Guanajuato', 'Guanajuato'),
+        ('Guerrero', 'Guerrero'),
+        ('Hidalgo', 'Hidalgo'),
+        ('Jalisco', 'Jalisco'),
+        ('Michoacán', 'Michoacán'),
+        ('Morelos', 'Morelos'),
+        ('Nayarit', 'Nayarit'),
+        ('Nuevo León', 'Nuevo León'),
+        ('Oaxaca', 'Oaxaca'),
+        ('Puebla', 'Puebla'),
+        ('Querétaro', 'Querétaro'),
+        ('Quintana Roo', 'Quintana Roo'),
+        ('San Luis Potosí', 'San Luis Potosí'),
+        ('Sinaloa', 'Sinaloa'),
+        ('Sonora', 'Sonora'),
+        ('Tabasco', 'Tabasco'),
+        ('Tamaulipas', 'Tamaulipas'),
+        ('Tlaxcala', 'Tlaxcala'),
+        ('Veracruz', 'Veracruz'),
+        ('Yucatán', 'Yucatán'),
+        ('Zacatecas', 'Zacatecas'),
+    ]
+    
     full_name = models.CharField(max_length=200, verbose_name='Nombre Completo')
     position = models.CharField(max_length=100, default='Chofer', verbose_name='Puesto')
+    station = models.CharField(max_length=100, choices=STATION_CHOICES, blank=True, null=True, verbose_name='Estación')
     phone = models.CharField(max_length=20, verbose_name='Teléfono')
     email = models.EmailField(blank=True, verbose_name='Correo Electrónico')
     address = models.TextField(blank=True, verbose_name='Dirección')

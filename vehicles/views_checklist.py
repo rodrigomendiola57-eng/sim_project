@@ -27,6 +27,7 @@ class ChecklistCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateVie
         VehicleChecklist.objects.create(
             vehicle_id=request.POST.get('vehicle'),
             driver_name=request.POST.get('driver_name'),
+            station=request.POST.get('station'),
             tires_condition=request.POST.get('tires_condition'),
             tires_pressure=request.POST.get('tires_pressure'),
             lights=request.POST.get('lights'),

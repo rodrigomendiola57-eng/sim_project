@@ -16,6 +16,7 @@
                 <th>Fecha</th>
                 <th>Vehículo</th>
                 <th>Conductor</th>
+                <th>Estación</th>
                 <th>Odómetro</th>
                 <th>Estado General</th>
                 <th>Acciones</th>
@@ -27,6 +28,7 @@
                 <td>{{ checklist.inspection_date|date:"d/m/Y H:i" }}</td>
                 <td><strong>{{ checklist.vehicle.plate }}</strong></td>
                 <td>{{ checklist.driver_name }}</td>
+                <td>{{ checklist.station|default:"-" }}</td>
                 <td>{{ checklist.odometer_reading }} km</td>
                 <td>
                     {% if checklist.overall_status == 'Bueno' %}

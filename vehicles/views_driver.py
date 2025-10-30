@@ -14,7 +14,7 @@ class DriverListView(ListView):
 class DriverCreateView(CreateView):
     model = Driver
     template_name = 'vehicles/driver_form.html'
-    fields = ['full_name', 'position', 'phone', 'email', 'address', 'license_number', 'license_expiry', 'hire_date', 'status', 'notes']
+    fields = ['full_name', 'position', 'station', 'phone', 'email', 'address', 'license_number', 'license_expiry', 'hire_date', 'status', 'notes']
     success_url = reverse_lazy('driver_list')
 
     def form_valid(self, form):
@@ -24,7 +24,7 @@ class DriverCreateView(CreateView):
 class DriverUpdateView(UpdateView):
     model = Driver
     template_name = 'vehicles/driver_form.html'
-    fields = ['full_name', 'position', 'phone', 'email', 'address', 'license_number', 'license_expiry', 'hire_date', 'status', 'notes']
+    fields = ['full_name', 'position', 'station', 'phone', 'email', 'address', 'license_number', 'license_expiry', 'hire_date', 'status', 'notes']
     success_url = reverse_lazy('driver_list')
 
     def form_valid(self, form):

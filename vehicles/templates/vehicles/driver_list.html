@@ -18,6 +18,7 @@
             </div>
             <div class="card-body">
                 <p><strong>Puesto:</strong> {{ driver.position }}</p>
+                {% if driver.station %}<p><strong>Estación:</strong> {{ driver.station }}</p>{% endif %}
                 <p><strong>Teléfono:</strong> {{ driver.phone }}</p>
                 <p><strong>Licencia:</strong> {{ driver.license_number }}</p>
                 <p><strong>Vencimiento:</strong> {{ driver.license_expiry|date:"d/m/Y" }}</p>
