@@ -11,7 +11,9 @@
                 <p class="mb-0">Lista completa de vehículos registrados en el sistema.</p>
             </div>
             <div class="mt-3 mt-sm-0">
+                {% if perms.vehicles.add_vehicle %}
                 <a href="{% url 'vehicle_add' %}" class="btn btn-accent">+ Agregar Vehículo</a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -65,8 +67,13 @@
                     {% endif %}
                 </td>
                 <td>
+                    <a href="{% url 'vehicle_detail' vehicle.pk %}" class="btn btn-sm btn-info">Ver</a>
+                    {% if perms.vehicles.change_vehicle %}
                     <a href="{% url 'vehicle_update' vehicle.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                    {% endif %}
+                    {% if perms.vehicles.delete_vehicle %}
                     <a href="{% url 'vehicle_delete' vehicle.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
@@ -92,7 +99,10 @@
 
 {% else %}
 <div class="alert alert-info">
-    No hay vehículos registrados. <a href="{% url 'vehicle_add' %}">Agregar el primero</a>
+    No hay vehículos registrados.
+    {% if perms.vehicles.add_vehicle %}
+    <a href="{% url 'vehicle_add' %}">Agregar el primero</a>
+    {% endif %}
 </div>
 {% endif %}
 {% endblock %}

@@ -1,12 +1,14 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import Q
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import redirect
 from .models import Vehicle, Document, Maintenance, MaintenanceType, Workshop
 from .forms import VehicleForm, DocumentForm, MaintenanceForm
 
 # ----------------- VEHICLES -----------------
-class VehicleListView(ListView):
+class VehicleListView(LoginRequiredMixin, ListView):
     model = Vehicle
     template_name = 'vehicles/vehicle_list.html'
     context_object_name = 'vehicles'
@@ -29,8 +31,15 @@ class VehicleListView(ListView):
         context['search'] = self.request.GET.get('search', '')
         return context
 
-class VehicleCreateView(CreateView):
+class VehicleCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'vehicles.add_vehicle'
+    raise_exception = False
+    permission_denied_message = 'No tienes permisos para crear vehículos'
     model = Vehicle
+    
+    def handle_no_permission(self):
+        messages.error(self.request, 'No tienes permisos para crear vehículos')
+        return redirect('vehicle_list')
     form_class = VehicleForm
     template_name = 'vehicles/vehicle_form.html'
     success_url = reverse_lazy('vehicle_list')
@@ -39,7 +48,8 @@ class VehicleCreateView(CreateView):
         messages.success(self.request, 'Vehículo creado exitosamente')
         return super().form_valid(form)
 
-class VehicleUpdateView(UpdateView):
+class VehicleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'vehicles.change_vehicle'
     model = Vehicle
     form_class = VehicleForm
     template_name = 'vehicles/vehicle_form.html'
@@ -49,7 +59,19 @@ class VehicleUpdateView(UpdateView):
         messages.success(self.request, 'Vehículo actualizado exitosamente')
         return super().form_valid(form)
 
-class VehicleDeleteView(DeleteView):
+class VehicleDetailView(LoginRequiredMixin, DetailView):
+    model = Vehicle
+    template_name = 'vehicles/vehicle_detail.html'
+    context_object_name = 'vehicle'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['documents'] = Document.objects.filter(vehicle=self.object).select_related('doc_type')
+        context['maintenances'] = Maintenance.objects.filter(vehicle=self.object).select_related('maintenance_type', 'workshop').order_by('-created_at')[:10]
+        return context
+
+class VehicleDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'vehicles.delete_vehicle'
     model = Vehicle
     template_name = 'vehicles/vehicle_confirm_delete.html'
     success_url = reverse_lazy('vehicle_list')
@@ -60,7 +82,7 @@ class VehicleDeleteView(DeleteView):
 
 
 # ----------------- DOCUMENTS -----------------
-class DocumentListView(ListView):
+class DocumentListView(LoginRequiredMixin, ListView):
     model = Document
     template_name = 'vehicles/document_list.html'
     context_object_name = 'documents'
@@ -69,7 +91,8 @@ class DocumentListView(ListView):
     def get_queryset(self):
         return Document.objects.select_related('vehicle').all()
 
-class DocumentCreateView(CreateView):
+class DocumentCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'vehicles.add_document'
     model = Document
     form_class = DocumentForm
     template_name = 'vehicles/document_form.html'
@@ -86,7 +109,8 @@ class DocumentCreateView(CreateView):
         messages.success(self.request, 'Documento creado exitosamente')
         return super().form_valid(form)
 
-class DocumentUpdateView(UpdateView):
+class DocumentUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'vehicles.change_document'
     model = Document
     form_class = DocumentForm
     template_name = 'vehicles/document_form.html'
@@ -96,7 +120,8 @@ class DocumentUpdateView(UpdateView):
         messages.success(self.request, 'Documento actualizado exitosamente')
         return super().form_valid(form)
 
-class DocumentDeleteView(DeleteView):
+class DocumentDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'vehicles.delete_document'
     model = Document
     template_name = 'vehicles/document_confirm_delete.html'
     success_url = reverse_lazy('document_list')
@@ -107,7 +132,7 @@ class DocumentDeleteView(DeleteView):
 
 
 # ----------------- MAINTENANCE -----------------
-class MaintenanceListView(ListView):
+class MaintenanceListView(LoginRequiredMixin, ListView):
     model = Maintenance
     template_name = 'vehicles/maintenance_list.html'
     context_object_name = 'maintenances'
@@ -132,7 +157,8 @@ class MaintenanceListView(ListView):
         context['search'] = self.request.GET.get('search', '')
         return context
 
-class MaintenanceCreateView(CreateView):
+class MaintenanceCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'vehicles.add_maintenance'
     model = Maintenance
     template_name = 'vehicles/maintenance_form.html'
     fields = ['vehicle', 'maintenance_type', 'detected_by', 'problem_description']
@@ -143,7 +169,8 @@ class MaintenanceCreateView(CreateView):
         messages.success(self.request, 'Problema detectado y registrado exitosamente')
         return super().form_valid(form)
 
-class MaintenanceUpdateView(UpdateView):
+class MaintenanceUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'vehicles.change_maintenance'
     model = Maintenance
     form_class = MaintenanceForm
     template_name = 'vehicles/maintenance_form.html'
@@ -153,7 +180,8 @@ class MaintenanceUpdateView(UpdateView):
         messages.success(self.request, 'Mantenimiento actualizado exitosamente')
         return super().form_valid(form)
 
-class MaintenanceDeleteView(DeleteView):
+class MaintenanceDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'vehicles.delete_maintenance'
     model = Maintenance
     template_name = 'vehicles/maintenance_confirm_delete.html'
     success_url = reverse_lazy('maintenance_list')
@@ -164,13 +192,14 @@ class MaintenanceDeleteView(DeleteView):
 
 
 # ----------------- MAINTENANCE TYPES -----------------
-class MaintenanceTypeListView(ListView):
+class MaintenanceTypeListView(LoginRequiredMixin, ListView):
     model = MaintenanceType
     template_name = 'vehicles/maintenancetype_list.html'
     context_object_name = 'maintenance_types'
     paginate_by = 10
 
-class MaintenanceTypeCreateView(CreateView):
+class MaintenanceTypeCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'vehicles.add_maintenancetype'
     model = MaintenanceType
     template_name = 'vehicles/maintenancetype_form.html'
     fields = ['name', 'description', 'estimated_cost']
@@ -180,7 +209,8 @@ class MaintenanceTypeCreateView(CreateView):
         messages.success(self.request, 'Tipo de servicio creado exitosamente')
         return super().form_valid(form)
 
-class MaintenanceTypeUpdateView(UpdateView):
+class MaintenanceTypeUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'vehicles.change_maintenancetype'
     model = MaintenanceType
     template_name = 'vehicles/maintenancetype_form.html'
     fields = ['name', 'description', 'estimated_cost']
@@ -190,7 +220,8 @@ class MaintenanceTypeUpdateView(UpdateView):
         messages.success(self.request, 'Tipo de servicio actualizado exitosamente')
         return super().form_valid(form)
 
-class MaintenanceTypeDeleteView(DeleteView):
+class MaintenanceTypeDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'vehicles.delete_maintenancetype'
     model = MaintenanceType
     template_name = 'vehicles/maintenancetype_confirm_delete.html'
     success_url = reverse_lazy('maintenancetype_list')
@@ -204,7 +235,8 @@ class MaintenanceTypeDeleteView(DeleteView):
 from django.views.generic import TemplateView
 from django.shortcuts import redirect
 
-class MaintenanceBulkCreateView(TemplateView):
+class MaintenanceBulkCreateView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    permission_required = 'vehicles.add_maintenance'
     template_name = 'vehicles/maintenance_bulk_create.html'
 
     def get_context_data(self, **kwargs):

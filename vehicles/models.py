@@ -2,6 +2,35 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import datetime
 
+class Sim(models.Model):
+    ESTADO_CHOICES = [
+        ('Activo', 'Activo'),
+        ('Inactivo', 'Inactivo'),
+        ('Suspendido', 'Suspendido'),
+    ]
+    
+    OPERADOR_CHOICES = [
+        ('Telcel', 'Telcel'),
+        ('Movistar', 'Movistar'),
+        ('AT&T', 'AT&T'),
+        ('Otro', 'Otro'),
+    ]
+    
+    numero = models.CharField(max_length=20, unique=True, verbose_name='Número')
+    iccid = models.CharField(max_length=30, unique=True, verbose_name='ICCID')
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='Activo', verbose_name='Estado')
+    operador = models.CharField(max_length=50, choices=OPERADOR_CHOICES, verbose_name='Operador')
+    fecha_activacion = models.DateField(null=True, blank=True, verbose_name='Fecha de Activación')
+    fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Registro')
+    
+    class Meta:
+        ordering = ['-fecha_registro']
+        verbose_name = 'SIM'
+        verbose_name_plural = 'SIMs'
+    
+    def __str__(self):
+        return f"{self.numero} - {self.operador}"
+
 class Vehicle(models.Model):
     STATUS_CHOICES = [
         ('Active', 'Active'),
@@ -17,6 +46,7 @@ class Vehicle(models.Model):
         verbose_name='Año'
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active', verbose_name='Estado')
+    station = models.CharField(max_length=100, blank=True, null=True, verbose_name='Estación')
     photo = models.ImageField(upload_to='vehicles/', null=True, blank=True, verbose_name='Foto')
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)

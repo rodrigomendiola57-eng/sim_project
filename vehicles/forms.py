@@ -4,12 +4,13 @@ from .models import Vehicle, Document, Maintenance
 class VehicleForm(forms.ModelForm):
     class Meta:
         model = Vehicle
-        fields = ['plate', 'brand', 'model', 'year', 'status', 'photo']
+        fields = ['plate', 'brand', 'model', 'year', 'station', 'status', 'photo']
         widgets = {
             'plate': forms.TextInput(attrs={'class': 'form-control'}),
             'brand': forms.TextInput(attrs={'class': 'form-control'}),
             'model': forms.TextInput(attrs={'class': 'form-control'}),
             'year': forms.NumberInput(attrs={'class': 'form-control'}),
+            'station': forms.TextInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
             'photo': forms.FileInput(attrs={'class': 'form-control'}),
         }

@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    VehicleListView, VehicleCreateView, VehicleUpdateView, VehicleDeleteView,
+    VehicleListView, VehicleCreateView, VehicleUpdateView, VehicleDeleteView, VehicleDetailView,
     DocumentListView, DocumentCreateView, DocumentUpdateView, DocumentDeleteView,
     MaintenanceListView, MaintenanceCreateView, MaintenanceUpdateView, MaintenanceDeleteView,
     MaintenanceTypeListView, MaintenanceTypeCreateView, MaintenanceTypeUpdateView, MaintenanceTypeDeleteView,
@@ -16,14 +16,18 @@ from .views_daily_report import DailyReportPDFView
 from .views_workshop import WorkshopListView, WorkshopCreateView, WorkshopUpdateView, WorkshopDeleteView
 from .views_maintenance_phases import MaintenanceDetailView, MaintenanceQuoteView, MaintenanceApproveView, MaintenanceRejectView, MaintenanceCompleteView
 from .views_vehicle_documents import VehicleDocumentsView
+from .views_register import RegisterView
 
 urlpatterns = [
+    # ----------------- AUTH -----------------
+    path('register/', RegisterView.as_view(), name='register'),
     # ----------------- DASHBOARD -----------------
     path('', DashboardView.as_view(), name='dashboard'),
     path('daily-report/pdf/', DailyReportPDFView.as_view(), name='daily_report_pdf'),
     
     # ----------------- VEHICLES -----------------
     path('vehicles/', VehicleListView.as_view(), name='vehicle_list'),
+    path('vehicles/<int:pk>/', VehicleDetailView.as_view(), name='vehicle_detail'),
     path('add/', VehicleCreateView.as_view(), name='vehicle_add'),
     path('update/<int:pk>/', VehicleUpdateView.as_view(), name='vehicle_update'),
     path('delete/<int:pk>/', VehicleDeleteView.as_view(), name='vehicle_delete'),
