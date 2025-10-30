@@ -78,7 +78,14 @@
                         <li><span class="dropdown-item-text"><strong>{{ user.get_full_name|default:user.username }}</strong></span></li>
                         <li><span class="dropdown-item-text text-muted" style="font-size: 0.85rem;">{{ user.email|default:"Sin email" }}</span></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{% url 'logout' %}" style="color: #dc2626 !important;"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                        <li>
+                            <form method="post" action="{% url 'logout' %}" style="margin:0;">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item text-danger" style="background:none; border:none; padding:0.5rem 1rem; width:100%; text-align:left;">
+                                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </li>
                 {% endif %}
