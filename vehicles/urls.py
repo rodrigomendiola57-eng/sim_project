@@ -16,11 +16,8 @@ from .views_daily_report import DailyReportPDFView
 from .views_workshop import WorkshopListView, WorkshopCreateView, WorkshopUpdateView, WorkshopDeleteView
 from .views_maintenance_phases import MaintenanceDetailView, MaintenanceQuoteView, MaintenanceApproveView, MaintenanceRejectView, MaintenanceCompleteView
 from .views_vehicle_documents import VehicleDocumentsView
-from .views_register import RegisterView
 
 urlpatterns = [
-    # ----------------- AUTH -----------------
-    path('register/', RegisterView.as_view(), name='register'),
     # ----------------- DASHBOARD -----------------
     path('', DashboardView.as_view(), name='dashboard'),
     path('daily-report/pdf/', DailyReportPDFView.as_view(), name='daily_report_pdf'),
