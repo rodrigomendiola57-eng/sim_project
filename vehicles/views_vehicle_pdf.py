@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image as RLImage
+from reportlab.platypus import SimpleDocTemplate as PDFDoc, Table, TableStyle, Paragraph, Spacer, Image as RLImage
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from io import BytesIO
@@ -18,7 +18,7 @@ class VehiclePDFView(LoginRequiredMixin, View):
         
         # Crear PDF
         buffer = BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
+        pdf_doc = PDFDoc(buffer, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
         elements = []
         styles = getSampleStyleSheet()
         
@@ -224,7 +224,7 @@ class VehiclePDFView(LoginRequiredMixin, View):
         elements.append(Paragraph("Sistema Integral de Mantenimiento (SIM)", footer_style))
         
         # Construir PDF
-        doc.build(elements)
+        pdf_doc.build(elements)
         buffer.seek(0)
         
         # Respuesta
