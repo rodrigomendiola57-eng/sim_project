@@ -279,11 +279,10 @@
                 </div>
                 <div class="alert alert-info">
                     <strong>Información del QR:</strong><br>
-                    Placa: {{ vehicle.plate }}<br>
-                    Marca: {{ vehicle.brand }} {{ vehicle.model }}<br>
-                    Año: {{ vehicle.year }}<br>
-                    Estado: {{ vehicle.status }}<br>
-                    Estación: {{ vehicle.station|default:"N/A" }}
+                    <small class="text-muted">Al escanear este QR te llevará directamente a:</small><br>
+                    <code>https://rodrigomendiola.pythonanywhere.com/vehicles/{{ vehicle.id }}/</code>
+                    <hr>
+                    <strong>Vehículo:</strong> {{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}
                 </div>
                 <a href="{% url 'vehicle_qr' vehicle.pk %}" class="btn btn-success" download="qr_{{ vehicle.plate }}.png">
                     <i class="fas fa-download"></i> Descargar QR

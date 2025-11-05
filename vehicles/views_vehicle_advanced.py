@@ -281,20 +281,13 @@ class VehicleQRCodeView(LoginRequiredMixin, View):
     def get(self, request, pk):
         vehicle = get_object_or_404(Vehicle, pk=pk)
         
-        # Datos del QR - Incluir ID único del vehículo
-        qr_data = f"""ID: {vehicle.pk}
-Placa: {vehicle.plate}
-Marca: {vehicle.brand}
-Modelo: {vehicle.model}
-Año: {vehicle.year}
-Estado: {vehicle.status}
-Estación: {vehicle.station or 'N/A'}
-Sistema: SIM-ICASA"""
+        # Datos del QR - URL directa a PythonAnywhere
+        qr_data = f"https://rodrigomendiola.pythonanywhere.com/vehicles/{vehicle.pk}/"
         
         # Generar QR con configuración mejorada
         qr = qrcode.QRCode(
             version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            error_correction=qrcode.constants.ERROR_CORRECT_M,
             box_size=10,
             border=4
         )
