@@ -10,12 +10,14 @@ from .forms import VehicleForm, DocumentForm, MaintenanceForm
 # ----------------- VEHICLES -----------------
 class VehicleListView(LoginRequiredMixin, ListView):
     model = Vehicle
-    template_name = 'vehicles/vehicle_list.html'
+    template_name = 'vehicles/vehicle_list_new.html'
     context_object_name = 'vehicles'
-    paginate_by = 10
+    paginate_by = 50
 
     def get_queryset(self):
         queryset = Vehicle.objects.all()
+        
+        # Búsqueda general
         search = self.request.GET.get('search')
         if search:
             queryset = queryset.filter(
@@ -24,7 +26,23 @@ class VehicleListView(LoginRequiredMixin, ListView):
                 Q(model__icontains=search) |
                 Q(year__icontains=search)
             )
-        return queryset
+        
+        # Filtro por estación
+        station = self.request.GET.get('station')
+        if station:
+            queryset = queryset.filter(station=station)
+        
+        # Filtro por estado
+        status = self.request.GET.get('status')
+        if status:
+            queryset = queryset.filter(status=status)
+        
+        # Filtro por año
+        year = self.request.GET.get('year')
+        if year:
+            queryset = queryset.filter(year=year)
+        
+        return queryset.order_by('-created_at')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

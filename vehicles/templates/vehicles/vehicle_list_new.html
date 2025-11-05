@@ -1,0 +1,397 @@
+{% extends 'vehicles/base.html' %}
+{% load static %}
+
+{% block title %}Vehículos - SIM ICASA{% endblock %}
+
+{% block content %}
+<style>
+/* Estilos Modernos para Vehículos */
+.vehicles-hero {
+    background: linear-gradient(135deg, #80AD46 0%, #6B9239 100%);
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    color: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(128, 173, 70, 0.3);
+}
+
+.view-toggle {
+    background: white;
+    border-radius: 12px;
+    padding: 0.5rem;
+    display: inline-flex;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.view-toggle-btn {
+    border: none;
+    background: transparent;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.view-toggle-btn.active {
+    background: linear-gradient(135deg, #80AD46, #6B9239);
+    color: white;
+}
+
+.vehicle-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.vehicle-card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+}
+
+.vehicle-card-body {
+    padding: 1.5rem;
+}
+
+.vehicle-plate {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.vehicle-info {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.badge-status {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+.badge-active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.badge-maintenance {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+}
+
+.badge-out {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.filter-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+.filter-group {
+    margin-bottom: 1rem;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.btn-modern {
+    border-radius: 10px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-primary-modern {
+    background: linear-gradient(135deg, #80AD46, #6B9239);
+    color: white;
+}
+
+.btn-action {
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+@media (max-width: 768px) {
+    .vehicle-card-img { height: 150px; }
+    .vehicle-plate { font-size: 1.2rem; }
+}
+</style>
+
+<!-- Hero Section -->
+<div class="vehicles-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="mb-2" style="font-weight: 800; font-size: 2.5rem;">
+                    <i class="bi bi-truck"></i> Vehículos
+                </h1>
+                <p class="mb-0" style="font-size: 1.1rem; opacity: 0.9;">
+                    Gestión completa de la flotilla ICASA
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <div class="view-toggle me-3 d-inline-flex">
+                    <button class="view-toggle-btn active" onclick="toggleView('cards')" id="btn-cards">
+                        <i class="bi bi-grid-3x3-gap"></i> Cards
+                    </button>
+                    <button class="view-toggle-btn" onclick="toggleView('table')" id="btn-table">
+                        <i class="bi bi-table"></i> Tabla
+                    </button>
+                </div>
+                {% if perms.vehicles.add_vehicle %}
+                <a href="{% url 'vehicle_add' %}" class="btn btn-light btn-modern">
+                    <i class="bi bi-plus-circle"></i> Agregar Vehículo
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Filtros Avanzados -->
+    <div class="filter-card">
+        <form method="get" id="filterForm">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="filter-group">
+                        <label><i class="bi bi-search"></i> Búsqueda</label>
+                        <input type="text" name="search" class="form-control" placeholder="Placa, marca, modelo..." value="{{ request.GET.search }}">
+                    </div>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <div class="filter-group">
+                        <label><i class="bi bi-geo-alt"></i> Estación</label>
+                        <select name="station" class="form-select">
+                            <option value="">Todas</option>
+                            <option value="Ciudad de México">CDMX</option>
+                            <option value="Guadalajara">Guadalajara</option>
+                            <option value="Monterrey">Monterrey</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <div class="filter-group">
+                        <label><i class="bi bi-tag"></i> Estado</label>
+                        <select name="status" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="Active">Activo</option>
+                            <option value="Maintenance">Mantenimiento</option>
+                            <option value="Out of service">Fuera de Servicio</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <div class="filter-group">
+                        <label><i class="bi bi-calendar"></i> Año</label>
+                        <input type="number" name="year" class="form-control" placeholder="2024" value="{{ request.GET.year }}">
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary-modern btn-modern flex-fill">
+                                <i class="bi bi-funnel"></i> Filtrar
+                            </button>
+                            <a href="{% url 'vehicle_list' %}" class="btn btn-secondary btn-modern">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Vista de Cards -->
+    <div id="cardsView">
+        {% if vehicles %}
+        <div class="row">
+            {% for vehicle in vehicles %}
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="vehicle-card">
+                    {% if vehicle.photo %}
+                        <img src="{{ vehicle.photo.url }}" alt="{{ vehicle.plate }}" class="vehicle-card-img">
+                    {% else %}
+                        <div class="vehicle-card-img d-flex align-items-center justify-content-center">
+                            <i class="bi bi-truck" style="font-size: 4rem; color: #80AD46; opacity: 0.3;"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="vehicle-card-body">
+                        <div class="vehicle-plate">{{ vehicle.plate }}</div>
+                        <div class="vehicle-info">
+                            <i class="bi bi-tag"></i> {{ vehicle.brand }} {{ vehicle.model }}
+                        </div>
+                        <div class="vehicle-info">
+                            <i class="bi bi-calendar"></i> {{ vehicle.year }}
+                            {% if vehicle.station %}
+                            | <i class="bi bi-geo-alt"></i> {{ vehicle.station }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mt-3 mb-3">
+                            {% if vehicle.status == 'Active' %}
+                                <span class="badge-status badge-active">
+                                    <i class="bi bi-check-circle"></i> Activo
+                                </span>
+                            {% elif vehicle.status == 'Maintenance' %}
+                                <span class="badge-status badge-maintenance">
+                                    <i class="bi bi-wrench"></i> Mantenimiento
+                                </span>
+                            {% else %}
+                                <span class="badge-status badge-out">
+                                    <i class="bi bi-x-circle"></i> Fuera de Servicio
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'vehicle_detail' vehicle.pk %}" class="btn btn-info btn-action flex-fill">
+                                <i class="bi bi-eye"></i> Ver
+                            </a>
+                            {% if perms.vehicles.change_vehicle %}
+                            <a href="{% url 'vehicle_update' vehicle.pk %}" class="btn btn-warning btn-action">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-truck" style="font-size: 5rem; color: #cbd5e1;"></i>
+            <h3 class="mt-3 text-muted">No hay vehículos registrados</h3>
+            {% if perms.vehicles.add_vehicle %}
+            <a href="{% url 'vehicle_add' %}" class="btn btn-primary-modern btn-modern mt-3">
+                <i class="bi bi-plus-circle"></i> Agregar el primero
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Vista de Tabla -->
+    <div id="tableView" style="display: none;">
+        {% if vehicles %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead style="background: #f8fafc;">
+                    <tr>
+                        <th>Foto</th>
+                        <th>Placa</th>
+                        <th>Marca/Modelo</th>
+                        <th>Año</th>
+                        <th>Estación</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for vehicle in vehicles %}
+                    <tr>
+                        <td>
+                            {% if vehicle.photo %}
+                                <img src="{{ vehicle.photo.url }}" alt="{{ vehicle.plate }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                            {% else %}
+                                <div style="width: 50px; height: 50px; background: #f0fdf4; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-truck" style="color: #80AD46;"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ vehicle.plate }}</strong></td>
+                        <td>{{ vehicle.brand }} {{ vehicle.model }}</td>
+                        <td>{{ vehicle.year }}</td>
+                        <td>{{ vehicle.station|default:"-" }}</td>
+                        <td>
+                            {% if vehicle.status == 'Active' %}
+                                <span class="badge bg-success">Activo</span>
+                            {% elif vehicle.status == 'Maintenance' %}
+                                <span class="badge bg-warning">Mantenimiento</span>
+                            {% else %}
+                                <span class="badge bg-danger">Fuera de Servicio</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'vehicle_detail' vehicle.pk %}" class="btn btn-sm btn-info">Ver</a>
+                            {% if perms.vehicles.change_vehicle %}
+                            <a href="{% url 'vehicle_update' vehicle.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function toggleView(view) {
+    const cardsView = document.getElementById('cardsView');
+    const tableView = document.getElementById('tableView');
+    const btnCards = document.getElementById('btn-cards');
+    const btnTable = document.getElementById('btn-table');
+    
+    if (view === 'cards') {
+        cardsView.style.display = 'block';
+        tableView.style.display = 'none';
+        btnCards.classList.add('active');
+        btnTable.classList.remove('active');
+        localStorage.setItem('vehicleView', 'cards');
+    } else {
+        cardsView.style.display = 'none';
+        tableView.style.display = 'block';
+        btnCards.classList.remove('active');
+        btnTable.classList.add('active');
+        localStorage.setItem('vehicleView', 'table');
+    }
+}
+
+// Recordar vista preferida
+window.addEventListener('DOMContentLoaded', () => {
+    const savedView = localStorage.getItem('vehicleView') || 'cards';
+    toggleView(savedView);
+});
+</script>
+{% endblock %}
