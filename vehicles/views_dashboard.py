@@ -6,7 +6,7 @@ from calendar import monthrange
 from .models import Vehicle, Document, Maintenance, VehicleChecklist
 
 class DashboardView(LoginRequiredMixin, TemplateView):
-    template_name = 'vehicles/dashboard.html'
+    template_name = 'vehicles/dashboard_new.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -73,5 +73,12 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['active_vehicles'] = Vehicle.objects.filter(status='Active').count()
         context['maintenance_vehicles'] = Vehicle.objects.filter(status='Maintenance').count()
         context['total_documents'] = Document.objects.count()
+        
+        # Datos para gráficas
+        context['maint_detectado'] = Maintenance.objects.filter(status='Detectado').count()
+        context['maint_cotizado'] = Maintenance.objects.filter(status='Cotizado').count()
+        context['maint_aprobado'] = Maintenance.objects.filter(status='Aprobado').count()
+        context['maint_completado'] = Maintenance.objects.filter(status='Completado').count()
+        context['out_of_service'] = Vehicle.objects.filter(status='Out of service').count()
 
         return context

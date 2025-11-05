@@ -1,0 +1,344 @@
+{% extends 'vehicles/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - SIM ICASA{% endblock %}
+
+{% block content %}
+<style>
+/* Estilos del Dashboard Profesional */
+.dashboard-hero {
+    background: linear-gradient(135deg, #80AD46 0%, #6B9239 100%);
+    padding: 2.5rem 0;
+    margin: -2rem -15px 2rem -15px;
+    color: white;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 10px 30px rgba(128, 173, 70, 0.3);
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: none;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 1rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0.5rem 0;
+}
+
+.stat-label {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+.alert-card {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+.alert-card .card-header {
+    border-radius: 16px 16px 0 0;
+    border: none;
+    padding: 1.25rem 1.5rem;
+}
+
+.badge-modern {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.btn-modern {
+    border-radius: 10px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 768px) {
+    .stat-number { font-size: 2rem; }
+    .stat-icon { width: 50px; height: 50px; font-size: 24px; }
+}
+</style>
+
+<!-- Hero Section -->
+<div class="dashboard-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2" style="font-weight: 800; font-size: 2.5rem;">
+                    <i class="bi bi-speedometer2"></i> Dashboard SIM
+                </h1>
+                <p class="mb-0" style="font-size: 1.1rem; opacity: 0.9;">
+                    Sistema Integral de Mantenimiento - ICASA
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{% url 'daily_report_pdf' %}" class="btn btn-light btn-modern" target="_blank">
+                    <i class="bi bi-file-pdf"></i> Reporte Diario
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Estadísticas Principales -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;">
+                    <i class="bi bi-truck"></i>
+                </div>
+                <div class="stat-number" style="color: #3b82f6;" data-target="{{ total_vehicles }}">0</div>
+                <div class="stat-label">Total Vehículos</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stat-number" style="color: #10b981;" data-target="{{ active_vehicles }}">0</div>
+                <div class="stat-label">Activos</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;">
+                    <i class="bi bi-wrench"></i>
+                </div>
+                <div class="stat-number" style="color: #f59e0b;" data-target="{{ maintenance_vehicles }}">0</div>
+                <div class="stat-label">En Mantenimiento</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white;">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div class="stat-number" style="color: #ef4444;" data-target="{{ expired_docs.count }}">0</div>
+                <div class="stat-label">Docs Vencidos</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficas -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="chart-card">
+                <h5 class="mb-3" style="font-weight: 700; color: #1e293b;">
+                    <i class="bi bi-pie-chart"></i> Estado de Vehículos
+                </h5>
+                <canvas id="vehicleStatusChart" height="250"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="chart-card">
+                <h5 class="mb-3" style="font-weight: 700; color: #1e293b;">
+                    <i class="bi bi-bar-chart"></i> Mantenimientos del Mes
+                </h5>
+                <canvas id="maintenanceChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas Críticas -->
+    {% if expired_docs %}
+    <div class="alert-card card border-danger">
+        <div class="card-header text-white" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+            <h5 class="mb-0" style="font-weight: 700;">
+                <i class="bi bi-exclamation-triangle-fill"></i> Documentos Vencidos ({{ expired_docs.count }})
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Vehículo</th>
+                            <th>Documento</th>
+                            <th>Vencimiento</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for doc in expired_docs|slice:":5" %}
+                        <tr>
+                            <td><strong>{{ doc.vehicle.plate }}</strong></td>
+                            <td>{{ doc.doc_type }}</td>
+                            <td>{{ doc.expiry_date|date:"d/m/Y" }}</td>
+                            <td><span class="badge bg-danger badge-modern">{{ doc.days_expired }} días vencido</span></td>
+                            <td><a href="{% url 'document_update' doc.pk %}" class="btn btn-sm btn-warning btn-modern">Renovar</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Checklists del Día -->
+    <div class="alert-card card border-success">
+        <div class="card-header text-white" style="background: linear-gradient(135deg, #80AD46, #6B9239);">
+            <h5 class="mb-0" style="font-weight: 700;">
+                <i class="bi bi-clipboard-check-fill"></i> Checklists de Hoy ({{ today_checklists.count }})
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if today_checklists %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Vehículo</th>
+                            <th>Conductor</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for checklist in today_checklists|slice:":5" %}
+                        <tr>
+                            <td>{{ checklist.inspection_date|date:"H:i" }}</td>
+                            <td><strong>{{ checklist.vehicle.plate }}</strong></td>
+                            <td>{{ checklist.driver_name }}</td>
+                            <td>
+                                {% if checklist.overall_status == 'Bueno' %}
+                                    <span class="badge bg-success badge-modern">✓ Bueno</span>
+                                {% elif checklist.overall_status == 'Regular' %}
+                                    <span class="badge bg-warning badge-modern">⚠ Regular</span>
+                                {% else %}
+                                    <span class="badge bg-danger badge-modern">✗ Malo</span>
+                                {% endif %}
+                            </td>
+                            <td><a href="{% url 'checklist_detail' checklist.pk %}" class="btn btn-sm btn-info btn-modern">Ver</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4">
+                <i class="bi bi-clipboard-x" style="font-size: 3rem; color: #cbd5e1;"></i>
+                <p class="text-muted mt-2">No hay checklists registrados hoy</p>
+                <a href="{% url 'checklist_create' %}" class="btn btn-success btn-modern">Crear Checklist</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Animación de contadores
+document.querySelectorAll('.stat-number').forEach(counter => {
+    const target = parseInt(counter.getAttribute('data-target'));
+    const duration = 2000;
+    const increment = target / (duration / 16);
+    let current = 0;
+    
+    const updateCounter = () => {
+        current += increment;
+        if (current < target) {
+            counter.textContent = Math.floor(current);
+            requestAnimationFrame(updateCounter);
+        } else {
+            counter.textContent = target;
+        }
+    };
+    updateCounter();
+});
+
+// Gráfica de Estado de Vehículos
+const ctx1 = document.getElementById('vehicleStatusChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+        labels: ['Activos', 'En Mantenimiento', 'Fuera de Servicio'],
+        datasets: [{
+            data: [{{ active_vehicles }}, {{ maintenance_vehicles }}, {{ out_of_service }}],
+            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'bottom', labels: { padding: 15, font: { size: 12, weight: '600' } } }
+        }
+    }
+});
+
+// Gráfica de Mantenimientos
+const ctx2 = document.getElementById('maintenanceChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: ['Detectado', 'Cotizado', 'Aprobado', 'Completado'],
+        datasets: [{
+            label: 'Mantenimientos',
+            data: [{{ maint_detectado }}, {{ maint_cotizado }}, {{ maint_aprobado }}, {{ maint_completado }}],
+            backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#6b7280'],
+            borderRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        }
+    }
+});
+</script>
+{% endblock %}
