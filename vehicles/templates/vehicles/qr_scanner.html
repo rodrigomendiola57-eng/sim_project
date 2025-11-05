@@ -1,0 +1,273 @@
+{% extends 'vehicles/base.html' %}
+{% load static %}
+
+{% block title %}Escanear QR - SIM ICASA{% endblock %}
+
+{% block content %}
+<style>
+.scanner-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#reader {
+    border: 3px solid #80AD46;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.scanner-hero {
+    background: linear-gradient(135deg, #80AD46 0%, #6B9239 100%);
+    padding: 2rem;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(128, 173, 70, 0.3);
+}
+
+.result-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-top: 2rem;
+    display: none;
+}
+
+.result-card.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn-scan {
+    background: linear-gradient(135deg, #80AD46, #6B9239);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-scan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(128, 173, 70, 0.4);
+}
+
+.status-message {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.status-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.status-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Hero Section -->
+    <div class="scanner-hero">
+        <h1 class="mb-2" style="font-weight: 800; font-size: 2.5rem;">
+            <i class="fas fa-qrcode"></i> Escanear QR
+        </h1>
+        <p class="mb-0" style="font-size: 1.1rem; opacity: 0.9;">
+            Escanea el código QR del vehículo para ver su información
+        </p>
+    </div>
+
+    <div class="scanner-container">
+        <!-- Botón para iniciar cámara -->
+        <div class="text-center mb-4">
+            <button id="startButton" class="btn-scan" onclick="startScanner()">
+                <i class="fas fa-camera"></i> Activar Cámara
+            </button>
+            <button id="stopButton" class="btn-scan" onclick="stopScanner()" style="display: none; background: #dc3545;">
+                <i class="fas fa-stop"></i> Detener Cámara
+            </button>
+        </div>
+
+        <!-- Mensaje de estado -->
+        <div id="statusMessage"></div>
+
+        <!-- Visor de cámara -->
+        <div id="reader" style="display: none;"></div>
+
+        <!-- Resultado del escaneo -->
+        <div id="resultCard" class="result-card">
+            <h4 class="text-center mb-3">
+                <i class="fas fa-check-circle text-success"></i> Vehículo Encontrado
+            </h4>
+            <div id="vehicleInfo" class="text-center">
+                <!-- Se llenará con JavaScript -->
+            </div>
+            <div class="text-center mt-3">
+                <a id="viewVehicleBtn" href="#" class="btn btn-success btn-lg">
+                    <i class="fas fa-eye"></i> Ver Detalle del Vehículo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Librería Html5-QRCode -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<script>
+let html5QrCode;
+let isScanning = false;
+
+function showStatus(message, type) {
+    const statusDiv = document.getElementById('statusMessage');
+    statusDiv.className = `status-message status-${type}`;
+    statusDiv.innerHTML = message;
+    statusDiv.style.display = 'block';
+}
+
+function startScanner() {
+    const readerDiv = document.getElementById('reader');
+    const startBtn = document.getElementById('startButton');
+    const stopBtn = document.getElementById('stopButton');
+    
+    if (isScanning) return;
+    
+    showStatus('<i class="fas fa-spinner fa-spin"></i> Iniciando cámara...', 'info');
+    
+    readerDiv.style.display = 'block';
+    startBtn.style.display = 'none';
+    stopBtn.style.display = 'inline-block';
+    
+    html5QrCode = new Html5Qrcode("reader");
+    
+    const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0
+    };
+    
+    html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        onScanSuccess,
+        onScanError
+    ).then(() => {
+        isScanning = true;
+        showStatus('<i class="fas fa-camera"></i> Cámara activa - Apunta al código QR', 'success');
+    }).catch(err => {
+        console.error('Error al iniciar cámara:', err);
+        showStatus('<i class="fas fa-exclamation-triangle"></i> Error al acceder a la cámara. Verifica los permisos.', 'error');
+        stopScanner();
+    });
+}
+
+function stopScanner() {
+    if (!isScanning || !html5QrCode) return;
+    
+    html5QrCode.stop().then(() => {
+        isScanning = false;
+        document.getElementById('reader').style.display = 'none';
+        document.getElementById('startButton').style.display = 'inline-block';
+        document.getElementById('stopButton').style.display = 'none';
+        showStatus('<i class="fas fa-info-circle"></i> Cámara detenida', 'info');
+    }).catch(err => {
+        console.error('Error al detener cámara:', err);
+    });
+}
+
+function onScanSuccess(decodedText, decodedResult) {
+    console.log('QR escaneado:', decodedText);
+    
+    // Detener el escáner
+    stopScanner();
+    
+    showStatus('<i class="fas fa-spinner fa-spin"></i> Buscando vehículo...', 'info');
+    
+    // Extraer ID del texto del QR
+    const lines = decodedText.split('\n');
+    let vehicleId = null;
+    
+    for (let line of lines) {
+        if (line.startsWith('ID:')) {
+            vehicleId = line.replace('ID:', '').trim();
+            break;
+        }
+    }
+    
+    if (!vehicleId) {
+        showStatus('<i class="fas fa-exclamation-triangle"></i> QR inválido - No se encontró ID del vehículo', 'error');
+        return;
+    }
+    
+    // Buscar vehículo en el servidor
+    fetch(`/qr/lookup/?id=${vehicleId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showVehicleInfo(data);
+            } else {
+                showStatus('<i class="fas fa-exclamation-triangle"></i> ' + (data.error || 'Vehículo no encontrado'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showStatus('<i class="fas fa-exclamation-triangle"></i> Error al buscar vehículo', 'error');
+        });
+}
+
+function onScanError(errorMessage) {
+    // Ignorar errores de escaneo continuo
+}
+
+function showVehicleInfo(data) {
+    const infoDiv = document.getElementById('vehicleInfo');
+    infoDiv.innerHTML = `
+        <div class="mb-3">
+            <h5 class="text-success">${data.plate}</h5>
+            <p class="mb-1"><strong>Marca:</strong> ${data.brand}</p>
+            <p class="mb-1"><strong>Modelo:</strong> ${data.model}</p>
+        </div>
+    `;
+    
+    document.getElementById('viewVehicleBtn').href = data.url;
+    document.getElementById('resultCard').classList.add('show');
+    document.getElementById('statusMessage').style.display = 'none';
+}
+
+// Limpiar al salir de la página
+window.addEventListener('beforeunload', () => {
+    if (isScanning) {
+        stopScanner();
+    }
+});
+</script>
+{% endblock %}

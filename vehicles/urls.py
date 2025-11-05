@@ -16,6 +16,7 @@ from .views_daily_report import DailyReportPDFView
 from .views_workshop import WorkshopListView, WorkshopCreateView, WorkshopUpdateView, WorkshopDeleteView
 from .views_maintenance_phases import MaintenanceDetailView, MaintenanceQuoteView, MaintenanceApproveView, MaintenanceRejectView, MaintenanceCompleteView
 from .views_vehicle_documents import VehicleDocumentsView
+from .views_qr_scanner import QRScannerView, QRLookupView
 from .views_vehicle_advanced import (
     VehicleExportExcelView, VehicleExportPDFView, VehicleImportExcelView,
     VehicleHistoryView, VehicleQRCodeView, VehicleDownloadTemplateView
@@ -84,6 +85,10 @@ urlpatterns = [
     path('checklists/<int:pk>/', ChecklistDetailView.as_view(), name='checklist_detail'),
     path('checklists/<int:pk>/delete/', ChecklistDeleteView.as_view(), name='checklist_delete'),
 
+    # ----------------- QR SCANNER -----------------
+    path('qr/scanner/', QRScannerView.as_view(), name='qr_scanner'),
+    path('qr/lookup/', QRLookupView.as_view(), name='qr_lookup'),
+    
     # ----------------- DRIVERS -----------------
     path('drivers/', DriverListView.as_view(), name='driver_list'),
     path('drivers/create/', DriverCreateView.as_view(), name='driver_create'),
