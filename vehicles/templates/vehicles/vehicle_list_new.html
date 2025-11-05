@@ -165,7 +165,7 @@
                 </p>
             </div>
             <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                <div class="view-toggle me-3 d-inline-flex">
+                <div class="view-toggle me-2 d-inline-flex">
                     <button class="view-toggle-btn active" onclick="toggleView('cards')" id="btn-cards">
                         <i class="bi bi-grid-3x3-gap"></i> Cards
                     </button>
@@ -173,9 +173,28 @@
                         <i class="bi bi-table"></i> Tabla
                     </button>
                 </div>
+                
+                <!-- Dropdown Exportar/Importar -->
+                <div class="btn-group me-2" role="group">
+                    <button type="button" class="btn btn-light btn-modern dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="bi bi-download"></i> Exportar
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'vehicle_export_excel' %}?{{ request.GET.urlencode }}">
+                            <i class="bi bi-file-earmark-excel text-success"></i> Exportar a Excel
+                        </a></li>
+                        <li><a class="dropdown-item" href="{% url 'vehicle_export_pdf' %}?{{ request.GET.urlencode }}">
+                            <i class="bi bi-file-earmark-pdf text-danger"></i> Exportar a PDF
+                        </a></li>
+                    </ul>
+                </div>
+                
                 {% if perms.vehicles.add_vehicle %}
+                <button type="button" class="btn btn-light btn-modern me-2" data-bs-toggle="modal" data-bs-target="#importModal">
+                    <i class="bi bi-upload"></i> Importar
+                </button>
                 <a href="{% url 'vehicle_add' %}" class="btn btn-light btn-modern">
-                    <i class="bi bi-plus-circle"></i> Agregar Vehículo
+                    <i class="bi bi-plus-circle"></i> Agregar
                 </a>
                 {% endif %}
             </div>
@@ -366,7 +385,97 @@
     </div>
 </div>
 
+<!-- Modal Importar Excel -->
+<div class="modal fade" id="importModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #80AD46, #6B9239); color: white;">
+                <h5 class="modal-title"><i class="bi bi-upload"></i> Importar Vehículos desde Excel</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> 
+                    <strong>Formato requerido:</strong> Placa, Marca, Modelo, Año, Estado, Estación
+                </div>
+                
+                <div class="mb-3">
+                    <a href="{% url 'vehicle_download_template' %}" class="btn btn-outline-success w-100">
+                        <i class="bi bi-download"></i> Descargar Plantilla Excel
+                    </a>
+                </div>
+                
+                <form id="importForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Seleccionar archivo Excel</label>
+                        <input type="file" class="form-control" id="excelFile" name="file" accept=".xlsx,.xls" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary-modern btn-modern w-100">
+                        <i class="bi bi-upload"></i> Importar Vehículos
+                    </button>
+                </form>
+                
+                <div id="importResult" class="mt-3" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+// Importar Excel
+document.getElementById('importForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    const fileInput = document.getElementById('excelFile');
+    formData.append('file', fileInput.files[0]);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    
+    const resultDiv = document.getElementById('importResult');
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div class="alert alert-info"><i class="bi bi-hourglass-split"></i> Importando...</div>';
+    
+    try {
+        const response = await fetch('{% url "vehicle_import_excel" %}', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            let message = `<div class="alert alert-success">
+                <i class="bi bi-check-circle"></i> 
+                <strong>Importación exitosa!</strong><br>
+                Creados: ${data.created} | Actualizados: ${data.updated}`;
+            
+            if (data.errors.length > 0) {
+                message += `<br><br><strong>Errores:</strong><ul>`;
+                data.errors.forEach(err => {
+                    message += `<li>${err}</li>`;
+                });
+                message += `</ul>`;
+            }
+            message += `</div>`;
+            
+            resultDiv.innerHTML = message;
+            
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
+        } else {
+            resultDiv.innerHTML = `<div class="alert alert-danger">
+                <i class="bi bi-x-circle"></i> Error: ${data.error}
+            </div>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<div class="alert alert-danger">
+            <i class="bi bi-x-circle"></i> Error al importar: ${error}
+        </div>`;
+    }
+});
+
 function toggleView(view) {
     const cardsView = document.getElementById('cardsView');
     const tableView = document.getElementById('tableView');

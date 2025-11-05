@@ -16,6 +16,10 @@ from .views_daily_report import DailyReportPDFView
 from .views_workshop import WorkshopListView, WorkshopCreateView, WorkshopUpdateView, WorkshopDeleteView
 from .views_maintenance_phases import MaintenanceDetailView, MaintenanceQuoteView, MaintenanceApproveView, MaintenanceRejectView, MaintenanceCompleteView
 from .views_vehicle_documents import VehicleDocumentsView
+from .views_vehicle_advanced import (
+    VehicleExportExcelView, VehicleExportPDFView, VehicleImportExcelView,
+    VehicleHistoryView, VehicleQRCodeView, VehicleDownloadTemplateView
+)
 
 urlpatterns = [
     # ----------------- DASHBOARD -----------------
@@ -25,6 +29,12 @@ urlpatterns = [
     # ----------------- VEHICLES -----------------
     path('vehicles/', VehicleListView.as_view(), name='vehicle_list'),
     path('vehicles/<int:pk>/', VehicleDetailView.as_view(), name='vehicle_detail'),
+    path('vehicles/<int:pk>/history/', VehicleHistoryView.as_view(), name='vehicle_history'),
+    path('vehicles/<int:pk>/qr/', VehicleQRCodeView.as_view(), name='vehicle_qr'),
+    path('vehicles/export/excel/', VehicleExportExcelView.as_view(), name='vehicle_export_excel'),
+    path('vehicles/export/pdf/', VehicleExportPDFView.as_view(), name='vehicle_export_pdf'),
+    path('vehicles/import/excel/', VehicleImportExcelView.as_view(), name='vehicle_import_excel'),
+    path('vehicles/template/download/', VehicleDownloadTemplateView.as_view(), name='vehicle_download_template'),
     path('add/', VehicleCreateView.as_view(), name='vehicle_add'),
     path('update/<int:pk>/', VehicleUpdateView.as_view(), name='vehicle_update'),
     path('delete/<int:pk>/', VehicleDeleteView.as_view(), name='vehicle_delete'),

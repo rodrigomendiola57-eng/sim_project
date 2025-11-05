@@ -1,0 +1,209 @@
+{% extends 'vehicles/base.html' %}
+{% load static %}
+
+{% block title %}Historial - {{ vehicle.plate }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #80AD46 0%, #6B9239 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1"><i class="fas fa-history me-2"></i>Historial del Vehículo</h2>
+                            <p class="mb-0 opacity-75">{{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}</p>
+                        </div>
+                        <a href="{% url 'vehicle_detail' vehicle.pk %}" class="btn btn-light">
+                            <i class="fas fa-arrow-left me-2"></i>Volver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vehicle Info Card -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2 text-center">
+                            {% if vehicle.photo %}
+                                <img src="{{ vehicle.photo.url }}" class="img-fluid rounded" style="max-height: 120px;">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 120px;">
+                                    <i class="fas fa-car fa-3x text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <small class="text-muted">Placa</small>
+                                    <h5>{{ vehicle.plate }}</h5>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted">Marca/Modelo</small>
+                                    <h5>{{ vehicle.brand }} {{ vehicle.model }}</h5>
+                                </div>
+                                <div class="col-md-2">
+                                    <small class="text-muted">Año</small>
+                                    <h5>{{ vehicle.year }}</h5>
+                                </div>
+                                <div class="col-md-2">
+                                    <small class="text-muted">Estado</small>
+                                    <h5>
+                                        {% if vehicle.status == 'Active' %}
+                                            <span class="badge bg-success">Activo</span>
+                                        {% elif vehicle.status == 'Maintenance' %}
+                                            <span class="badge bg-warning">Mantenimiento</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Fuera de Servicio</span>
+                                        {% endif %}
+                                    </h5>
+                                </div>
+                                <div class="col-md-2">
+                                    <small class="text-muted">Estación</small>
+                                    <h5>{{ vehicle.station|default:"N/A" }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4"><i class="fas fa-clock me-2"></i>Línea de Tiempo</h5>
+                    
+                    {% if timeline %}
+                        <div class="timeline">
+                            {% for event in timeline %}
+                                <div class="timeline-item mb-4">
+                                    <div class="row">
+                                        <div class="col-md-2 text-end">
+                                            <small class="text-muted">
+                                                {{ event.date|date:"d/m/Y" }}<br>
+                                                {{ event.date|date:"H:i" }}
+                                            </small>
+                                        </div>
+                                        <div class="col-md-1 text-center">
+                                            <div class="timeline-badge 
+                                                {% if event.type == 'maintenance' %}bg-primary
+                                                {% else %}bg-info{% endif %}">
+                                                <i class="fas 
+                                                    {% if event.type == 'maintenance' %}fa-wrench
+                                                    {% else %}fa-file-alt{% endif %} text-white"></i>
+                                            </div>
+                                            {% if not forloop.last %}
+                                                <div class="timeline-line"></div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="card border-start border-4 
+                                                {% if event.type == 'maintenance' %}border-primary
+                                                {% else %}border-info{% endif %} shadow-sm">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <h6 class="mb-1">
+                                                                {% if event.type == 'maintenance' %}
+                                                                    <i class="fas fa-wrench text-primary me-2"></i>
+                                                                {% else %}
+                                                                    <i class="fas fa-file-alt text-info me-2"></i>
+                                                                {% endif %}
+                                                                {{ event.title }}
+                                                            </h6>
+                                                            <p class="mb-2 text-muted">{{ event.description }}</p>
+                                                            
+                                                            {% if event.type == 'maintenance' %}
+                                                                <div class="d-flex gap-3">
+                                                                    <small>
+                                                                        <strong>Estado:</strong>
+                                                                        {% if event.status == 'Detectado' %}
+                                                                            <span class="badge bg-secondary">{{ event.status }}</span>
+                                                                        {% elif event.status == 'Cotizado' %}
+                                                                            <span class="badge bg-info">{{ event.status }}</span>
+                                                                        {% elif event.status == 'Aprobado' %}
+                                                                            <span class="badge bg-primary">{{ event.status }}</span>
+                                                                        {% elif event.status == 'Completado' %}
+                                                                            <span class="badge bg-success">{{ event.status }}</span>
+                                                                        {% else %}
+                                                                            <span class="badge bg-danger">{{ event.status }}</span>
+                                                                        {% endif %}
+                                                                    </small>
+                                                                    {% if event.cost %}
+                                                                        <small><strong>Costo:</strong> ${{ event.cost|floatformat:2 }}</small>
+                                                                    {% endif %}
+                                                                    <small><strong>Taller:</strong> {{ event.workshop }}</small>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="d-flex gap-3">
+                                                                    <small>
+                                                                        <strong>Estado:</strong>
+                                                                        {% if event.status == 'Vigente' %}
+                                                                            <span class="badge bg-success">{{ event.status }}</span>
+                                                                        {% else %}
+                                                                            <span class="badge bg-danger">{{ event.status }}</span>
+                                                                        {% endif %}
+                                                                    </small>
+                                                                    {% if event.number %}
+                                                                        <small><strong>Número:</strong> {{ event.number }}</small>
+                                                                    {% endif %}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No hay eventos registrados para este vehículo</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.timeline-line {
+    width: 2px;
+    height: 100%;
+    background: #dee2e6;
+    margin: 5px auto 0;
+    min-height: 60px;
+}
+
+.timeline-item:last-child .timeline-line {
+    display: none;
+}
+</style>
+{% endblock %}
