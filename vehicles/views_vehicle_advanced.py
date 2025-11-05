@@ -281,16 +281,23 @@ class VehicleQRCodeView(LoginRequiredMixin, View):
     def get(self, request, pk):
         vehicle = get_object_or_404(Vehicle, pk=pk)
         
-        # Datos del QR
-        qr_data = f"""Vehículo: {vehicle.plate}
+        # Datos del QR - Incluir ID único del vehículo
+        qr_data = f"""ID: {vehicle.pk}
+Placa: {vehicle.plate}
 Marca: {vehicle.brand}
 Modelo: {vehicle.model}
 Año: {vehicle.year}
 Estado: {vehicle.status}
-Estación: {vehicle.station or 'N/A'}"""
+Estación: {vehicle.station or 'N/A'}
+Sistema: SIM-ICASA"""
         
-        # Generar QR
-        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        # Generar QR con configuración mejorada
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            box_size=10,
+            border=4
+        )
         qr.add_data(qr_data)
         qr.make(fit=True)
         
@@ -302,7 +309,8 @@ Estación: {vehicle.station or 'N/A'}"""
         buffer.seek(0)
         
         response = HttpResponse(buffer, content_type='image/png')
-        response['Content-Disposition'] = f'attachment; filename=qr_{vehicle.plate}.png'
+        # No forzar descarga, permitir visualización en navegador
+        response['Content-Disposition'] = f'inline; filename=qr_{vehicle.plate}.png'
         return response
 
 

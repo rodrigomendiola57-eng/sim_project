@@ -165,38 +165,44 @@
                 </p>
             </div>
             <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                <div class="view-toggle me-2 d-inline-flex">
-                    <button class="view-toggle-btn active" onclick="toggleView('cards')" id="btn-cards">
-                        <i class="bi bi-grid-3x3-gap"></i> Cards
+                <div class="d-flex justify-content-end align-items-center gap-2 flex-wrap">
+                    <!-- Toggle Vista -->
+                    <div class="view-toggle">
+                        <button class="view-toggle-btn active" onclick="toggleView('cards')" id="btn-cards">
+                            <i class="bi bi-grid-3x3-gap"></i> Cards
+                        </button>
+                        <button class="view-toggle-btn" onclick="toggleView('table')" id="btn-table">
+                            <i class="bi bi-table"></i> Tabla
+                        </button>
+                    </div>
+                    
+                    <!-- Dropdown Exportar -->
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-light btn-modern dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="bi bi-download"></i> Exportar
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'vehicle_export_excel' %}?{{ request.GET.urlencode }}">
+                                <i class="bi bi-file-earmark-excel text-success"></i> Exportar a Excel
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'vehicle_export_pdf' %}?{{ request.GET.urlencode }}">
+                                <i class="bi bi-file-earmark-pdf text-danger"></i> Exportar a PDF
+                            </a></li>
+                        </ul>
+                    </div>
+                    
+                    {% if perms.vehicles.add_vehicle %}
+                    <!-- Botón Importar -->
+                    <button type="button" class="btn btn-light btn-modern" data-bs-toggle="modal" data-bs-target="#importModal">
+                        <i class="bi bi-upload"></i> Importar
                     </button>
-                    <button class="view-toggle-btn" onclick="toggleView('table')" id="btn-table">
-                        <i class="bi bi-table"></i> Tabla
-                    </button>
+                    
+                    <!-- Botón Agregar -->
+                    <a href="{% url 'vehicle_add' %}" class="btn btn-light btn-modern">
+                        <i class="bi bi-plus-circle"></i> Agregar
+                    </a>
+                    {% endif %}
                 </div>
-                
-                <!-- Dropdown Exportar/Importar -->
-                <div class="btn-group me-2" role="group">
-                    <button type="button" class="btn btn-light btn-modern dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="bi bi-download"></i> Exportar
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'vehicle_export_excel' %}?{{ request.GET.urlencode }}">
-                            <i class="bi bi-file-earmark-excel text-success"></i> Exportar a Excel
-                        </a></li>
-                        <li><a class="dropdown-item" href="{% url 'vehicle_export_pdf' %}?{{ request.GET.urlencode }}">
-                            <i class="bi bi-file-earmark-pdf text-danger"></i> Exportar a PDF
-                        </a></li>
-                    </ul>
-                </div>
-                
-                {% if perms.vehicles.add_vehicle %}
-                <button type="button" class="btn btn-light btn-modern me-2" data-bs-toggle="modal" data-bs-target="#importModal">
-                    <i class="bi bi-upload"></i> Importar
-                </button>
-                <a href="{% url 'vehicle_add' %}" class="btn btn-light btn-modern">
-                    <i class="bi bi-plus-circle"></i> Agregar
-                </a>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -218,9 +224,38 @@
                         <label><i class="bi bi-geo-alt"></i> Estación</label>
                         <select name="station" class="form-select">
                             <option value="">Todas</option>
-                            <option value="Ciudad de México">CDMX</option>
-                            <option value="Guadalajara">Guadalajara</option>
-                            <option value="Monterrey">Monterrey</option>
+                            <option value="Aguascalientes">Aguascalientes</option>
+                            <option value="Baja California">Baja California</option>
+                            <option value="Baja California Sur">Baja California Sur</option>
+                            <option value="Campeche">Campeche</option>
+                            <option value="Chiapas">Chiapas</option>
+                            <option value="Chihuahua">Chihuahua</option>
+                            <option value="Ciudad de México">Ciudad de México</option>
+                            <option value="Coahuila">Coahuila</option>
+                            <option value="Colima">Colima</option>
+                            <option value="Durango">Durango</option>
+                            <option value="Estado de México">Estado de México</option>
+                            <option value="Guanajuato">Guanajuato</option>
+                            <option value="Guerrero">Guerrero</option>
+                            <option value="Hidalgo">Hidalgo</option>
+                            <option value="Jalisco">Jalisco</option>
+                            <option value="Michoacán">Michoacán</option>
+                            <option value="Morelos">Morelos</option>
+                            <option value="Nayarit">Nayarit</option>
+                            <option value="Nuevo León">Nuevo León</option>
+                            <option value="Oaxaca">Oaxaca</option>
+                            <option value="Puebla">Puebla</option>
+                            <option value="Querétaro">Querétaro</option>
+                            <option value="Quintana Roo">Quintana Roo</option>
+                            <option value="San Luis Potosí">San Luis Potosí</option>
+                            <option value="Sinaloa">Sinaloa</option>
+                            <option value="Sonora">Sonora</option>
+                            <option value="Tabasco">Tabasco</option>
+                            <option value="Tamaulipas">Tamaulipas</option>
+                            <option value="Tlaxcala">Tlaxcala</option>
+                            <option value="Veracruz">Veracruz</option>
+                            <option value="Yucatán">Yucatán</option>
+                            <option value="Zacatecas">Zacatecas</option>
                         </select>
                     </div>
                 </div>
