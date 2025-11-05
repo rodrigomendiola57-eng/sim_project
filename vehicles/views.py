@@ -86,6 +86,8 @@ class VehicleDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['documents'] = Document.objects.filter(vehicle=self.object).select_related('doc_type')
         context['maintenances'] = Maintenance.objects.filter(vehicle=self.object).select_related('maintenance_type', 'workshop').order_by('-created_at')[:10]
+        from .models import VehicleChecklist
+        context['checklists'] = VehicleChecklist.objects.filter(vehicle=self.object).order_by('-inspection_date')[:10]
         return context
 
 class VehicleDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):

@@ -130,6 +130,70 @@
         </div>
     </div>
 
+    <!-- Checklists -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #80AD46, #6B9239); color: white;">
+                    <h5 class="mb-0"><i class="fas fa-clipboard-check"></i> Checklists de Inspección</h5>
+                    <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#checklistModal">
+                        <i class="fas fa-plus"></i> Nuevo Checklist
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% if checklists %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Conductor</th>
+                                    <th>Estación</th>
+                                    <th>Estado General</th>
+                                    <th>Odómetro</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for checklist in checklists %}
+                                <tr>
+                                    <td>{{ checklist.inspection_date|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ checklist.driver_name }}</td>
+                                    <td>{{ checklist.station|default:"-" }}</td>
+                                    <td>
+                                        {% if checklist.overall_status == 'Bueno' %}
+                                            <span class="badge bg-success">Bueno</span>
+                                        {% elif checklist.overall_status == 'Regular' %}
+                                            <span class="badge bg-warning">Regular</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Malo</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ checklist.odometer_reading }} km</td>
+                                    <td>
+                                        <a href="{% url 'checklist_detail' checklist.pk %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-clipboard-check" style="font-size: 3rem; color: #cbd5e1;"></i>
+                        <p class="text-muted mt-2">No hay checklists registrados</p>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#checklistModal">
+                            <i class="fas fa-plus"></i> Crear el primero
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Historial de Mantenimientos -->
     <div class="row">
         <div class="col-12">
@@ -225,6 +289,270 @@
                     <i class="fas fa-download"></i> Descargar QR
                 </a>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear Checklist -->
+<div class="modal fade" id="checklistModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #80AD46, #6B9239); color: white;">
+                <h5 class="modal-title"><i class="fas fa-clipboard-check"></i> Nuevo Checklist - {{ vehicle.plate }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'checklist_create' %}">
+                {% csrf_token %}
+                <input type="hidden" name="vehicle" value="{{ vehicle.id }}">
+                <input type="hidden" name="from_detail" value="1">
+                
+                <div class="modal-body">
+                    <!-- Información General -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label"><i class="fas fa-user"></i> Nombre del Conductor</label>
+                            <input type="text" name="driver_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><i class="fas fa-map-marker-alt"></i> Estación</label>
+                            <select name="station" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option value="Aguascalientes">Aguascalientes</option>
+                                <option value="Baja California">Baja California</option>
+                                <option value="Baja California Sur">Baja California Sur</option>
+                                <option value="Campeche">Campeche</option>
+                                <option value="Chiapas">Chiapas</option>
+                                <option value="Chihuahua">Chihuahua</option>
+                                <option value="Ciudad de México" selected>Ciudad de México</option>
+                                <option value="Coahuila">Coahuila</option>
+                                <option value="Colima">Colima</option>
+                                <option value="Durango">Durango</option>
+                                <option value="Estado de México">Estado de México</option>
+                                <option value="Guanajuato">Guanajuato</option>
+                                <option value="Guerrero">Guerrero</option>
+                                <option value="Hidalgo">Hidalgo</option>
+                                <option value="Jalisco">Jalisco</option>
+                                <option value="Michoacán">Michoacán</option>
+                                <option value="Morelos">Morelos</option>
+                                <option value="Nayarit">Nayarit</option>
+                                <option value="Nuevo León">Nuevo León</option>
+                                <option value="Oaxaca">Oaxaca</option>
+                                <option value="Puebla">Puebla</option>
+                                <option value="Querétaro">Querétaro</option>
+                                <option value="Quintana Roo">Quintana Roo</option>
+                                <option value="San Luis Potosí">San Luis Potosí</option>
+                                <option value="Sinaloa">Sinaloa</option>
+                                <option value="Sonora">Sonora</option>
+                                <option value="Tabasco">Tabasco</option>
+                                <option value="Tamaulipas">Tamaulipas</option>
+                                <option value="Tlaxcala">Tlaxcala</option>
+                                <option value="Veracruz">Veracruz</option>
+                                <option value="Yucatán">Yucatán</option>
+                                <option value="Zacatecas">Zacatecas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label"><i class="fas fa-tachometer-alt"></i> Odómetro (km)</label>
+                            <input type="number" name="odometer_reading" class="form-control" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label"><i class="fas fa-gas-pump"></i> Nivel Combustible</label>
+                            <select name="fuel_level" class="form-select" required>
+                                <option value="Lleno">Lleno</option>
+                                <option value="3/4">3/4</option>
+                                <option value="1/2">1/2</option>
+                                <option value="1/4">1/4</option>
+                                <option value="Vacío">Vacío</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Checklist Items -->
+                    <h6 class="mb-3"><i class="fas fa-tasks"></i> Inspección del Vehículo</h6>
+                    <div class="row">
+                        <!-- Columna 1 -->
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Condición de Llantas</label>
+                                <select name="tires_condition" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Presión de Llantas</label>
+                                <select name="tires_pressure" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Luces</label>
+                                <select name="lights" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Espejos</label>
+                                <select name="mirrors" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Parabrisas</label>
+                                <select name="windshield" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Limpiaparabrisas</label>
+                                <select name="wipers" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Columna 2 -->
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Daños en Carrocería</label>
+                                <select name="body_damage" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Cinturones de Seguridad</label>
+                                <select name="seat_belts" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Claxon</label>
+                                <select name="horn" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Luces del Tablero</label>
+                                <select name="dashboard_lights" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Aire Acondicionado</label>
+                                <select name="air_conditioning" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Frenos</label>
+                                <select name="brakes" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Columna 3 -->
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Motor</label>
+                                <select name="engine" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nivel de Aceite</label>
+                                <select name="oil_level" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nivel de Refrigerante</label>
+                                <select name="coolant_level" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Batería</label>
+                                <select name="battery" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Extintor</label>
+                                <select name="fire_extinguisher" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Botiquín</label>
+                                <select name="first_aid_kit" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Triángulos de Seguridad</label>
+                                <select name="warning_triangles" class="form-select" required>
+                                    <option value="Bueno">Bueno</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Malo">Malo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label class="form-label"><i class="fas fa-comment"></i> Observaciones</label>
+                            <textarea name="observations" class="form-control" rows="3" placeholder="Comentarios adicionales..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Guardar Checklist
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
