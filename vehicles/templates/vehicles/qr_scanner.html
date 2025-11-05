@@ -210,9 +210,19 @@ function onScanSuccess(decodedText, decodedResult) {
     // Detener el escáner
     stopScanner();
     
-    showStatus('<i class="fas fa-spinner fa-spin"></i> Buscando vehículo...', 'info');
+    showStatus('<i class="fas fa-spinner fa-spin"></i> Procesando...', 'info');
     
-    // Extraer ID del texto del QR
+    // Verificar si es una URL directa
+    if (decodedText.includes('pythonanywhere.com/vehicles/') || decodedText.includes('/vehicles/')) {
+        // Es una URL directa, redirigir
+        showStatus('<i class="fas fa-check-circle"></i> Vehículo encontrado, redirigiendo...', 'success');
+        setTimeout(() => {
+            window.location.href = decodedText;
+        }, 1000);
+        return;
+    }
+    
+    // Formato antiguo: buscar ID
     const lines = decodedText.split('\n');
     let vehicleId = null;
     
@@ -224,7 +234,7 @@ function onScanSuccess(decodedText, decodedResult) {
     }
     
     if (!vehicleId) {
-        showStatus('<i class="fas fa-exclamation-triangle"></i> QR inválido - No se encontró ID del vehículo', 'error');
+        showStatus('<i class="fas fa-exclamation-triangle"></i> QR inválido', 'error');
         return;
     }
     
