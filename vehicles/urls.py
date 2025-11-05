@@ -17,6 +17,7 @@ from .views_workshop import WorkshopListView, WorkshopCreateView, WorkshopUpdate
 from .views_maintenance_phases import MaintenanceDetailView, MaintenanceQuoteView, MaintenanceApproveView, MaintenanceRejectView, MaintenanceCompleteView
 from .views_vehicle_documents import VehicleDocumentsView
 from .views_qr_scanner import QRScannerView, QRLookupView
+from .views_vehicle_pdf import VehiclePDFView
 from .views_vehicle_advanced import (
     VehicleExportExcelView, VehicleExportPDFView, VehicleImportExcelView,
     VehicleHistoryView, VehicleQRCodeView, VehicleDownloadTemplateView
@@ -32,6 +33,7 @@ urlpatterns = [
     path('vehicles/<int:pk>/', VehicleDetailView.as_view(), name='vehicle_detail'),
     path('vehicles/<int:pk>/history/', VehicleHistoryView.as_view(), name='vehicle_history'),
     path('vehicles/<int:pk>/qr/', VehicleQRCodeView.as_view(), name='vehicle_qr'),
+    path('vehicles/<int:pk>/pdf/', VehiclePDFView.as_view(), name='vehicle_pdf'),
     path('vehicles/export/excel/', VehicleExportExcelView.as_view(), name='vehicle_export_excel'),
     path('vehicles/export/pdf/', VehicleExportPDFView.as_view(), name='vehicle_export_pdf'),
     path('vehicles/import/excel/', VehicleImportExcelView.as_view(), name='vehicle_import_excel'),
